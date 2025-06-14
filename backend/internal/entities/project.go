@@ -1,6 +1,6 @@
 package entities
 
 type Project struct {
-    ID   int
+    ID   string
     Name string
 }

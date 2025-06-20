@@ -2,7 +2,6 @@ package domain
 
 import (
 	"boilerplate/internal/entities"
-	"boilerplate/internal/service"
 	"boilerplate/internal/storage"
 )
 
@@ -10,7 +9,7 @@ type projectService struct {
 	projectRepo storage.ProjectRepository
 }
 
-func NewProjectService(projectRepo storage.ProjectRepository) service.ProjectService {
+func NewProjectService(projectRepo storage.ProjectRepository) *projectService {
 	return &projectService{
 		projectRepo: projectRepo,
 	}

@@ -2,7 +2,6 @@ package domain
 
 import (
 	"boilerplate/internal/entities"
-	"boilerplate/internal/service"
 	"boilerplate/internal/storage"
 )
 
@@ -10,7 +9,7 @@ type taskService struct {
 	taskRepo storage.TaskRepository
 }
 
-func NewTaskService(taskRepo storage.TaskRepository) service.TaskService {
+func NewTaskService(taskRepo storage.TaskRepository) *taskService {
 	return &taskService{
 		taskRepo: taskRepo,
 	}

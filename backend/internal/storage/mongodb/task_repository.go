@@ -2,7 +2,6 @@ package mongodb
 
 import (
 	"boilerplate/internal/entities"
-	"boilerplate/internal/storage"
 	"context"
 	"errors"
 	"go.mongodb.org/mongo-driver/bson"
@@ -16,61 +15,20 @@ type MongoDbTask struct {
 	ProjectID primitive.ObjectID `bson:"project_id,omitempty"`
 }
 
-func ToMongo(task entities.Task) (*MongoDbTask, error) {
-	var oid primitive.ObjectID
-	var err error
-
-	if task.ID != "" {
-		oid, err = primitive.ObjectIDFromHex(task.ID)
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		oid = primitive.NewObjectID()
-	}
-
-	var projectOid primitive.ObjectID
-	if task.ProjectID != "" {
-		projectOid, err = primitive.ObjectIDFromHex(task.ProjectID)
-		if err != nil {
-			return nil, errors.New("invalid project ID format")
-		}
-	}
-
-	return &MongoDbTask{
-		ID:        oid,
-		Name:      task.Name,
-		ProjectID: projectOid,
-	}, nil
-}
-
-func FromMongo(task MongoDbTask) entities.Task {
-	var projectID string
-	if !task.ProjectID.IsZero() {
-		projectID = task.ProjectID.Hex()
-	}
-
-	return entities.Task{
-		ID:        task.ID.Hex(),
-		Name:      task.Name,
-		ProjectID: projectID,
-	}
-}
-
-type TaskRepository struct {
+type mongoDbTaskRepository struct {
 	collection *mongo.Collection
 	ctx        context.Context
 }
 
-func NewTaskRepository(client *mongo.Client, database string) storage.TaskRepository {
+func NewTaskRepository(client *mongo.Client, database string) *mongoDbTaskRepository {
 	collection := client.Database(database).Collection("tasks")
-	return &TaskRepository{
+	return &mongoDbTaskRepository{
 		collection: collection,
 		ctx:        context.Background(),
 	}
 }
 
-func (r *TaskRepository) Insert(task *entities.Task) error {
+func (r *mongoDbTaskRepository) Insert(task *entities.Task) error {
 	if task == nil {
 		return errors.New("task cannot be nil")
 	}
@@ -101,7 +59,7 @@ func (r *TaskRepository) Insert(task *entities.Task) error {
 	return nil
 }
 
-func (r *TaskRepository) Update(task *entities.Task) error {
+func (r *mongoDbTaskRepository) Update(task *entities.Task) error {
 	if task == nil {
 		return errors.New("task cannot be nil")
 	}
@@ -110,7 +68,7 @@ func (r *TaskRepository) Update(task *entities.Task) error {
 		return errors.New("task has no ID, use Insert instead")
 	}
 
-	mongoTask, err := ToMongo(*task)
+	mongoTask, err := toMongo(*task)
 	if err != nil {
 		return err
 	}
@@ -128,7 +86,7 @@ func (r *TaskRepository) Update(task *entities.Task) error {
 	return nil
 }
 
-func (r *TaskRepository) Delete(id string) error {
+func (r *mongoDbTaskRepository) Delete(id string) error {
 	oid, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return err
@@ -147,7 +105,7 @@ func (r *TaskRepository) Delete(id string) error {
 	return nil
 }
 
-func (r *TaskRepository) FindByID(id string) (entities.Task, error) {
+func (r *mongoDbTaskRepository) FindByID(id string) (entities.Task, error) {
 	oid, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return entities.Task{}, err
@@ -163,10 +121,10 @@ func (r *TaskRepository) FindByID(id string) (entities.Task, error) {
 		return entities.Task{}, err
 	}
 
-	return FromMongo(mongoTask), nil
+	return fromMongo(mongoTask), nil
 }
 
-func (r *TaskRepository) FindAll() ([]entities.Task, error) {
+func (r *mongoDbTaskRepository) FindAll() ([]entities.Task, error) {
 	cursor, err := r.collection.Find(r.ctx, bson.M{})
 	if err != nil {
 		return nil, err
@@ -180,13 +138,13 @@ func (r *TaskRepository) FindAll() ([]entities.Task, error) {
 
 	tasks := make([]entities.Task, len(mongoTasks))
 	for i, mongoTask := range mongoTasks {
-		tasks[i] = FromMongo(mongoTask)
+		tasks[i] = fromMongo(mongoTask)
 	}
 
 	return tasks, nil
 }
 
-func (r *TaskRepository) FindByProjectID(projectID string) ([]entities.Task, error) {
+func (r *mongoDbTaskRepository) FindByProjectID(projectID string) ([]entities.Task, error) {
 	projectOid, err := primitive.ObjectIDFromHex(projectID)
 	if err != nil {
 		return nil, errors.New("invalid project ID format")
@@ -206,8 +164,49 @@ func (r *TaskRepository) FindByProjectID(projectID string) ([]entities.Task, err
 
 	tasks := make([]entities.Task, len(mongoTasks))
 	for i, mongoTask := range mongoTasks {
-		tasks[i] = FromMongo(mongoTask)
+		tasks[i] = fromMongo(mongoTask)
 	}
 
 	return tasks, nil
+}
+
+func toMongo(task entities.Task) (*MongoDbTask, error) {
+	var oid primitive.ObjectID
+	var err error
+
+	if task.ID != "" {
+		oid, err = primitive.ObjectIDFromHex(task.ID)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		oid = primitive.NewObjectID()
+	}
+
+	var projectOid primitive.ObjectID
+	if task.ProjectID != "" {
+		projectOid, err = primitive.ObjectIDFromHex(task.ProjectID)
+		if err != nil {
+			return nil, errors.New("invalid project ID format")
+		}
+	}
+
+	return &MongoDbTask{
+		ID:        oid,
+		Name:      task.Name,
+		ProjectID: projectOid,
+	}, nil
+}
+
+func fromMongo(task MongoDbTask) entities.Task {
+	var projectID string
+	if !task.ProjectID.IsZero() {
+		projectID = task.ProjectID.Hex()
+	}
+
+	return entities.Task{
+		ID:        task.ID.Hex(),
+		Name:      task.Name,
+		ProjectID: projectID,
+	}
 }

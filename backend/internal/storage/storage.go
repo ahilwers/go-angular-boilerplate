@@ -3,7 +3,14 @@ package storage
 import (
 	"boilerplate/internal/entities"
 	"boilerplate/internal/storage/mongodb"
+	"errors"
 	"go.mongodb.org/mongo-driver/mongo"
+)
+
+var (
+	ErrNotFound      = errors.New("not found")
+	ErrAlreadyExists = errors.New("already exists")
+	ErrInvalidID     = errors.New("invalid id")
 )
 
 type TaskRepository interface {

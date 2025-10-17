@@ -7,12 +7,18 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"time"
 )
 
 type MongoDbTask struct {
-	ID        primitive.ObjectID `bson:"_id,omitempty"`
-	Name      string             `bson:"name"`
-	ProjectID primitive.ObjectID `bson:"project_id,omitempty"`
+	ID          primitive.ObjectID `bson:"_id,omitempty"`
+	ProjectID   primitive.ObjectID `bson:"project_id,omitempty"`
+	Title       string             `bson:"title"`
+	Status      int                `bson:"status"` // Store as int for efficiency
+	DueDate     *time.Time         `bson:"due_date,omitempty"`
+	Description string             `bson:"description,omitempty"`
+	CreatedAt   time.Time          `bson:"created_at"`
+	UpdatedAt   time.Time          `bson:"updated_at"`
 }
 
 type mongoDbTaskRepository struct {
@@ -37,9 +43,15 @@ func (r *mongoDbTaskRepository) Insert(task *entities.Task) error {
 		return errors.New("task already has an ID, use Update instead")
 	}
 
+	now := time.Now()
 	mongoTask := &MongoDbTask{
-		ID:   primitive.NewObjectID(),
-		Name: task.Name,
+		ID:          primitive.NewObjectID(),
+		Title:       task.Title,
+		Status:      int(task.Status),
+		DueDate:     task.DueDate,
+		Description: task.Description,
+		CreatedAt:   now,
+		UpdatedAt:   now,
 	}
 
 	if task.ProjectID != "" {
@@ -56,6 +68,8 @@ func (r *mongoDbTaskRepository) Insert(task *entities.Task) error {
 	}
 
 	task.ID = mongoTask.ID.Hex()
+	task.CreatedAt = mongoTask.CreatedAt
+	task.UpdatedAt = mongoTask.UpdatedAt
 	return nil
 }
 
@@ -72,6 +86,9 @@ func (r *mongoDbTaskRepository) Update(task *entities.Task) error {
 	if err != nil {
 		return err
 	}
+
+	// Update the UpdatedAt timestamp
+	mongoTask.UpdatedAt = time.Now()
 
 	filter := bson.M{"_id": mongoTask.ID}
 	result, err := r.collection.ReplaceOne(r.ctx, filter, mongoTask)
@@ -192,9 +209,14 @@ func toMongo(task entities.Task) (*MongoDbTask, error) {
 	}
 
 	return &MongoDbTask{
-		ID:        oid,
-		Name:      task.Name,
-		ProjectID: projectOid,
+		ID:          oid,
+		ProjectID:   projectOid,
+		Title:       task.Title,
+		Status:      int(task.Status),
+		DueDate:     task.DueDate,
+		Description: task.Description,
+		CreatedAt:   task.CreatedAt,
+		UpdatedAt:   task.UpdatedAt,
 	}, nil
 }
 
@@ -205,8 +227,13 @@ func fromMongo(task MongoDbTask) entities.Task {
 	}
 
 	return entities.Task{
-		ID:        task.ID.Hex(),
-		Name:      task.Name,
-		ProjectID: projectID,
+		ID:          task.ID.Hex(),
+		ProjectID:   projectID,
+		Title:       task.Title,
+		Status:      entities.TaskStatus(task.Status), // Convert int back to TaskStatus
+		DueDate:     task.DueDate,
+		Description: task.Description,
+		CreatedAt:   task.CreatedAt,
+		UpdatedAt:   task.UpdatedAt,
 	}
 }

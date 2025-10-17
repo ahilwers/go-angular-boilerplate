@@ -56,8 +56,9 @@ func (m *MockTaskRepository) FindByProjectID(projectID string) ([]entities.Task,
 func createTestTask() entities.Task {
 	return entities.Task{
 		ID:        "test-task-id",
-		Name:      "Test Task",
+		Title:     "Test Task",
 		ProjectID: "test-project-id",
+		Status:    entities.TaskStatusTodo,
 	}
 }
 
@@ -65,12 +66,12 @@ func setupMockForCreateTask(t *testing.T, mockRepo *MockTaskRepository, task ent
 	t.Helper()
 	mockRepo.On("Insert", mock.MatchedBy(func(t *entities.Task) bool {
 		// Überprüfe, ob die übergebene Task die erwarteten Werte hat
-		if task.Name != "" && t.Name != task.Name {
+		if task.Title != "" && t.Title != task.Title {
 			return false
 		}
 		// Setze die erwarteten Werte auf die übergebene Task
 		t.ID = expectedTask.ID
-		t.Name = expectedTask.Name
+		t.Title = expectedTask.Title
 		t.ProjectID = expectedTask.ProjectID
 		return true
 	})).Return(returnErr)
@@ -86,34 +87,38 @@ func TestTaskService_CreateTask(t *testing.T) {
 		{
 			name: "successful creation",
 			task: entities.Task{
-				Name:      "New Task",
+				Title:     "New Task",
 				ProjectID: "project-1",
+				Status:    entities.TaskStatusTodo,
 			},
 			expectedError: nil,
 			setupMock: func(t *testing.T, m *MockTaskRepository, task entities.Task) {
 				setupMockForCreateTask(t, m, task, entities.Task{
 					ID:        "new-task-id",
-					Name:      task.Name,
+					Title:     task.Title,
 					ProjectID: task.ProjectID,
+					Status:    task.Status,
 				}, nil)
 			},
 		},
 		{
-			name: "empty name",
+			name: "empty title",
 			task: entities.Task{
-				Name:      "",
+				Title:     "",
 				ProjectID: "project-1",
+				Status:    entities.TaskStatusTodo,
 			},
-			expectedError: errors.New("name is required"),
+			expectedError: errors.New("title is required"),
 			setupMock: func(t *testing.T, m *MockTaskRepository, task entities.Task) {
-				setupMockForCreateTask(t, m, task, entities.Task{}, errors.New("name is required"))
+				setupMockForCreateTask(t, m, task, entities.Task{}, errors.New("title is required"))
 			},
 		},
 		{
 			name: "empty project id",
 			task: entities.Task{
-				Name:      "Task without project",
+				Title:     "Task without project",
 				ProjectID: "",
+				Status:    entities.TaskStatusTodo,
 			},
 			expectedError: errors.New("project ID is required"),
 			setupMock: func(t *testing.T, m *MockTaskRepository, task entities.Task) {
@@ -138,7 +143,7 @@ func TestTaskService_CreateTask(t *testing.T) {
 			} else {
 				assert.NoError(t, err)
 				assert.NotEmpty(t, taskToCreate.ID)
-				assert.Equal(t, tt.task.Name, taskToCreate.Name)
+				assert.Equal(t, tt.task.Title, taskToCreate.Title)
 				assert.Equal(t, tt.task.ProjectID, taskToCreate.ProjectID)
 			}
 
@@ -165,15 +170,17 @@ func TestTaskService_GetTask(t *testing.T) {
 			taskID: "existing-task-id",
 			expectedTask: entities.Task{
 				ID:        "existing-task-id",
-				Name:      "Existing Task",
+				Title:     "Existing Task",
 				ProjectID: "project-1",
+				Status:    entities.TaskStatusTodo,
 			},
 			expectedError: nil,
 			setupMock: func(t *testing.T, m *MockTaskRepository, id string) {
 				setupMockForGetTask(t, m, id, entities.Task{
 					ID:        id,
-					Name:      "Existing Task",
+					Title:     "Existing Task",
 					ProjectID: "project-1",
+					Status:    entities.TaskStatusTodo,
 				}, nil)
 			},
 		},
@@ -228,8 +235,9 @@ func TestTaskService_UpdateTask(t *testing.T) {
 			name: "successful update",
 			task: entities.Task{
 				ID:        "existing-task-id",
-				Name:      "Updated Task",
+				Title:     "Updated Task",
 				ProjectID: "project-1",
+				Status:    entities.TaskStatusInProgress,
 			},
 			expectedError: nil,
 			setupMock: func(t *testing.T, m *MockTaskRepository, task entities.Task) {
@@ -240,8 +248,9 @@ func TestTaskService_UpdateTask(t *testing.T) {
 			name: "task not found",
 			task: entities.Task{
 				ID:        "non-existent-id",
-				Name:      "Non-existent Task",
+				Title:     "Non-existent Task",
 				ProjectID: "project-1",
+				Status:    entities.TaskStatusTodo,
 			},
 			expectedError: errors.New("task not found"),
 			setupMock: func(t *testing.T, m *MockTaskRepository, task entities.Task) {
@@ -338,14 +347,14 @@ func TestTaskService_ListTasks(t *testing.T) {
 		{
 			name: "successful list",
 			expectedTasks: []entities.Task{
-				{ID: "task-1", Name: "Task 1", ProjectID: "project-1"},
-				{ID: "task-2", Name: "Task 2", ProjectID: "project-1"},
+				{ID: "task-1", Title: "Task 1", ProjectID: "project-1", Status: entities.TaskStatusTodo},
+				{ID: "task-2", Title: "Task 2", ProjectID: "project-1", Status: entities.TaskStatusTodo},
 			},
 			expectedError: nil,
 			setupMock: func(t *testing.T, m *MockTaskRepository) {
 				setupMockForListTasks(t, m, []entities.Task{
-					{ID: "task-1", Name: "Task 1", ProjectID: "project-1"},
-					{ID: "task-2", Name: "Task 2", ProjectID: "project-1"},
+					{ID: "task-1", Title: "Task 1", ProjectID: "project-1", Status: entities.TaskStatusTodo},
+					{ID: "task-2", Title: "Task 2", ProjectID: "project-1", Status: entities.TaskStatusTodo},
 				}, nil)
 			},
 		},
@@ -406,14 +415,14 @@ func TestTaskService_FindByProjectID(t *testing.T) {
 			name:      "tasks found",
 			projectID: "project-1",
 			expectedTasks: []entities.Task{
-				{ID: "task-1", Name: "Task 1", ProjectID: "project-1"},
-				{ID: "task-2", Name: "Task 2", ProjectID: "project-1"},
+				{ID: "task-1", Title: "Task 1", ProjectID: "project-1", Status: entities.TaskStatusTodo},
+				{ID: "task-2", Title: "Task 2", ProjectID: "project-1", Status: entities.TaskStatusTodo},
 			},
 			expectedError: nil,
 			setupMock: func(t *testing.T, m *MockTaskRepository, projectID string) {
 				setupMockForFindByProjectID(t, m, projectID, []entities.Task{
-					{ID: "task-1", Name: "Task 1", ProjectID: "project-1"},
-					{ID: "task-2", Name: "Task 2", ProjectID: "project-1"},
+					{ID: "task-1", Title: "Task 1", ProjectID: "project-1", Status: entities.TaskStatusTodo},
+					{ID: "task-2", Title: "Task 2", ProjectID: "project-1", Status: entities.TaskStatusTodo},
 				}, nil)
 			},
 		},

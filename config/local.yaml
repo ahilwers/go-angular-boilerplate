@@ -1,0 +1,29 @@
+# Local development configuration for go-angular-boilerplate
+
+service:
+  host: "localhost"
+  port: 8080
+  read_timeout: 10 # seconds
+  write_timeout: 10 # seconds
+
+database:
+  uri: "mongodb://localhost:27017"
+  database: "boilerplate"
+  # username: "admin"  # optional, uncomment if using authentication
+  # password: "password"  # optional, uncomment if using authentication
+  timeout: 10 # seconds
+
+auth:
+  enabled: false # Set to true to enable Keycloak authentication
+  issuer: "http://localhost:8081/realms/boilerplate"
+  client_id: "boilerplate-client"
+  client_secret: "" # Set via environment variable for security
+  jwks_url: "http://localhost:8081/realms/boilerplate/protocol/openid-connect/certs"
+
+logging:
+  level: "debug" # debug, info, warn, error
+  format: "console" # console, json
+  # Uncomment to enable Loki logging
+  # loki:
+  #   url: "http://localhost:3100"
+  #   bearer_token: ""  # Optional bearer token for Loki

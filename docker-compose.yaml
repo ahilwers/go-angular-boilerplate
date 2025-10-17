@@ -1,0 +1,80 @@
+version: '3.8'
+
+services:
+  # MongoDB database
+  mongodb:
+    image: mongo:7
+    container_name: boilerplate-mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: boilerplate
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - boilerplate-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Keycloak for authentication
+  keycloak:
+    image: quay.io/keycloak/keycloak:23.0
+    container_name: boilerplate-keycloak
+    command: start-dev
+    ports:
+      - "8081:8080"
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: dev-file
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+      # Uncomment to import realm on startup
+      # - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm.json
+    networks:
+      - boilerplate-network
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8080;echo -e \"GET /health/ready HTTP/1.1\r\nhost: 127.0.0.1:8080\r\nConnection: close\r\n\r\n\" >&3;grep \"HTTP/1.1 200 OK\" <&3"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Loki for log aggregation (optional)
+  loki:
+    image: grafana/loki:2.9.3
+    container_name: boilerplate-loki
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - boilerplate-network
+    profiles:
+      - observability
+
+  # Grafana for log visualization (optional)
+  grafana:
+    image: grafana/grafana:10.2.3
+    container_name: boilerplate-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: "Admin"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - boilerplate-network
+    profiles:
+      - observability
+
+networks:
+  boilerplate-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+  keycloak_data:
+  grafana_data:

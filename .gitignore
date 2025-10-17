@@ -1,3 +1,4 @@
 backend/.DS_Store
 *.iml
 .idea
+backend/bin/server

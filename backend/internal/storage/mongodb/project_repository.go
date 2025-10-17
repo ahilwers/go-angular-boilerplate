@@ -7,11 +7,15 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"time"
 )
 
 type mongoDbProject struct {
-	ID   primitive.ObjectID `bson:"_id,omitempty"`
-	Name string             `bson:"name"`
+	ID          primitive.ObjectID `bson:"_id,omitempty"`
+	Name        string             `bson:"name"`
+	Description string             `bson:"description,omitempty"`
+	CreatedAt   time.Time          `bson:"created_at"`
+	UpdatedAt   time.Time          `bson:"updated_at"`
 }
 
 type mongoDbProjectRepository struct {
@@ -36,9 +40,13 @@ func (r *mongoDbProjectRepository) Insert(project *entities.Project) error {
 		return errors.New("project already has an ID, use Update instead")
 	}
 
+	now := time.Now()
 	mongoProject := &mongoDbProject{
-		ID:   primitive.NewObjectID(),
-		Name: project.Name,
+		ID:          primitive.NewObjectID(),
+		Name:        project.Name,
+		Description: project.Description,
+		CreatedAt:   now,
+		UpdatedAt:   now,
 	}
 
 	_, err := r.collection.InsertOne(r.ctx, mongoProject)
@@ -47,6 +55,8 @@ func (r *mongoDbProjectRepository) Insert(project *entities.Project) error {
 	}
 
 	project.ID = mongoProject.ID.Hex()
+	project.CreatedAt = mongoProject.CreatedAt
+	project.UpdatedAt = mongoProject.UpdatedAt
 	return nil
 }
 
@@ -63,6 +73,9 @@ func (r *mongoDbProjectRepository) Update(project *entities.Project) error {
 	if err != nil {
 		return err
 	}
+
+	// Update the UpdatedAt timestamp
+	mongoProject.UpdatedAt = time.Now()
 
 	filter := bson.M{"_id": mongoProject.ID}
 	result, err := r.collection.ReplaceOne(r.ctx, filter, mongoProject)
@@ -153,14 +166,20 @@ func toMongoProject(project entities.Project) (*mongoDbProject, error) {
 	}
 
 	return &mongoDbProject{
-		ID:   oid,
-		Name: project.Name,
+		ID:          oid,
+		Name:        project.Name,
+		Description: project.Description,
+		CreatedAt:   project.CreatedAt,
+		UpdatedAt:   project.UpdatedAt,
 	}, nil
 }
 
 func fromMongoProject(project mongoDbProject) entities.Project {
 	return entities.Project{
-		ID:   project.ID.Hex(),
-		Name: project.Name,
+		ID:          project.ID.Hex(),
+		Name:        project.Name,
+		Description: project.Description,
+		CreatedAt:   project.CreatedAt,
+		UpdatedAt:   project.UpdatedAt,
 	}
 }

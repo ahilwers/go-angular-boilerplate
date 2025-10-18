@@ -1,0 +1,145 @@
+.layout-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+.layout-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1.5rem;
+  height: 4rem;
+  background-color: var(--surface-card);
+  border-bottom: 1px solid var(--surface-border);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .app-title {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+}
+
+.layout-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.layout-sidebar {
+  width: 16rem;
+  background-color: var(--surface-card);
+  border-right: 1px solid var(--surface-border);
+  transition: width 0.3s ease, margin-left 0.3s ease;
+  overflow-y: auto;
+
+  &.collapsed {
+    width: 0;
+    margin-left: -16rem;
+  }
+
+  .sidebar-nav {
+    padding: 1rem 0;
+  }
+}
+
+.layout-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: var(--surface-ground);
+}
+
+.content-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem;
+}
+
+.layout-footer {
+  padding: 1rem 2rem;
+  background-color: var(--surface-card);
+  border-top: 1px solid var(--surface-border);
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--text-color-secondary);
+}
+
+:host ::ng-deep {
+  .sidebar-menu {
+    border: none;
+    background: transparent;
+    width: 100%;
+
+    .p-menuitem {
+      .p-menuitem-link {
+        padding: 1rem 1.5rem;
+        border-radius: 0;
+        transition: all 0.2s;
+
+        &:hover {
+          background-color: var(--surface-hover);
+        }
+
+        &:focus {
+          box-shadow: none;
+        }
+
+        .p-menuitem-icon {
+          color: var(--primary-color);
+          font-size: 1.125rem;
+          margin-right: 0.75rem;
+        }
+
+        .p-menuitem-text {
+          color: var(--text-color);
+          font-weight: 500;
+          font-size: 1rem;
+        }
+      }
+
+      &.p-menuitem-active .p-menuitem-link,
+      .p-menuitem-link.router-link-active {
+        background-color: var(--primary-color);
+
+        .p-menuitem-icon,
+        .p-menuitem-text {
+          color: #ffffff;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .layout-sidebar {
+    position: fixed;
+    left: 0;
+    top: 4rem;
+    height: calc(100vh - 4rem);
+    z-index: 999;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+
+    &.collapsed {
+      margin-left: -16rem;
+    }
+  }
+}

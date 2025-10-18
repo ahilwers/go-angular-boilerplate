@@ -1,0 +1,292 @@
+<div class="task-board-container">
+  <p-toast></p-toast>
+  <p-confirmDialog></p-confirmDialog>
+
+  <div class="board-header">
+    <button
+      pButton
+      icon="pi pi-arrow-left"
+      label="Back to Projects"
+      class="p-button-text"
+      (click)="backToProjects()"
+    ></button>
+    <div class="project-info" *ngIf="project()">
+      <h1>{{ project()!.name }}</h1>
+      <p *ngIf="project()!.description">{{ project()!.description }}</p>
+    </div>
+  </div>
+
+  <div class="board-columns" *ngIf="!loading(); else loadingTemplate">
+    <!-- TODO Column -->
+    <div class="board-column">
+      <div class="column-header todo-header">
+        <div class="column-title">
+          <i class="pi pi-circle"></i>
+          <h3>To Do</h3>
+          <span class="task-count">{{ todoTasks().length }}</span>
+        </div>
+        <button
+          pButton
+          icon="pi pi-plus"
+          class="p-button-rounded p-button-text"
+          pTooltip="Add Task"
+          (click)="openCreateDialog(statusOptions[0].value)"
+        ></button>
+      </div>
+      <div class="column-tasks">
+        <div
+          *ngFor="let task of todoTasks()"
+          class="task-card"
+        >
+          <div class="task-header">
+            <h4>{{ task.title }}</h4>
+            <div class="task-actions">
+              <button
+                pButton
+                icon="pi pi-pencil"
+                class="p-button-rounded p-button-text p-button-sm"
+                (click)="openEditDialog(task)"
+              ></button>
+              <button
+                pButton
+                icon="pi pi-trash"
+                class="p-button-rounded p-button-text p-button-sm p-button-danger"
+                (click)="deleteTask(task)"
+              ></button>
+            </div>
+          </div>
+          <p class="task-description" *ngIf="task.description">{{ task.description }}</p>
+          <div class="task-footer">
+            <span class="due-date" *ngIf="task.dueDate">
+              <i class="pi pi-calendar"></i> {{ task.dueDate | date:'short' }}
+            </span>
+            <button
+              pButton
+              label="Start"
+              icon="pi pi-play"
+              class="p-button-sm p-button-outlined"
+              (click)="changeTaskStatus(task, statusOptions[1].value)"
+            ></button>
+          </div>
+        </div>
+        <div *ngIf="todoTasks().length === 0" class="empty-column">
+          <i class="pi pi-inbox"></i>
+          <p>No tasks</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- IN PROGRESS Column -->
+    <div class="board-column">
+      <div class="column-header in-progress-header">
+        <div class="column-title">
+          <i class="pi pi-sync"></i>
+          <h3>In Progress</h3>
+          <span class="task-count">{{ inProgressTasks().length }}</span>
+        </div>
+        <button
+          pButton
+          icon="pi pi-plus"
+          class="p-button-rounded p-button-text"
+          pTooltip="Add Task"
+          (click)="openCreateDialog(statusOptions[1].value)"
+        ></button>
+      </div>
+      <div class="column-tasks">
+        <div
+          *ngFor="let task of inProgressTasks()"
+          class="task-card in-progress"
+        >
+          <div class="task-header">
+            <h4>{{ task.title }}</h4>
+            <div class="task-actions">
+              <button
+                pButton
+                icon="pi pi-pencil"
+                class="p-button-rounded p-button-text p-button-sm"
+                (click)="openEditDialog(task)"
+              ></button>
+              <button
+                pButton
+                icon="pi pi-trash"
+                class="p-button-rounded p-button-text p-button-sm p-button-danger"
+                (click)="deleteTask(task)"
+              ></button>
+            </div>
+          </div>
+          <p class="task-description" *ngIf="task.description">{{ task.description }}</p>
+          <div class="task-footer">
+            <span class="due-date" *ngIf="task.dueDate">
+              <i class="pi pi-calendar"></i> {{ task.dueDate | date:'short' }}
+            </span>
+            <div class="status-buttons">
+              <button
+                pButton
+                icon="pi pi-arrow-left"
+                class="p-button-sm p-button-text"
+                pTooltip="Move to To Do"
+                (click)="changeTaskStatus(task, statusOptions[0].value)"
+              ></button>
+              <button
+                pButton
+                icon="pi pi-check"
+                class="p-button-sm p-button-success"
+                pTooltip="Complete"
+                (click)="changeTaskStatus(task, statusOptions[2].value)"
+              ></button>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="inProgressTasks().length === 0" class="empty-column">
+          <i class="pi pi-inbox"></i>
+          <p>No tasks</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- DONE Column -->
+    <div class="board-column">
+      <div class="column-header done-header">
+        <div class="column-title">
+          <i class="pi pi-check-circle"></i>
+          <h3>Done</h3>
+          <span class="task-count">{{ doneTasks().length }}</span>
+        </div>
+        <button
+          pButton
+          icon="pi pi-plus"
+          class="p-button-rounded p-button-text"
+          pTooltip="Add Task"
+          (click)="openCreateDialog(statusOptions[2].value)"
+        ></button>
+      </div>
+      <div class="column-tasks">
+        <div
+          *ngFor="let task of doneTasks()"
+          class="task-card done"
+        >
+          <div class="task-header">
+            <h4>{{ task.title }}</h4>
+            <div class="task-actions">
+              <button
+                pButton
+                icon="pi pi-pencil"
+                class="p-button-rounded p-button-text p-button-sm"
+                (click)="openEditDialog(task)"
+              ></button>
+              <button
+                pButton
+                icon="pi pi-trash"
+                class="p-button-rounded p-button-text p-button-sm p-button-danger"
+                (click)="deleteTask(task)"
+              ></button>
+            </div>
+          </div>
+          <p class="task-description" *ngIf="task.description">{{ task.description }}</p>
+          <div class="task-footer">
+            <span class="due-date" *ngIf="task.dueDate">
+              <i class="pi pi-calendar"></i> {{ task.dueDate | date:'short' }}
+            </span>
+            <button
+              pButton
+              icon="pi pi-arrow-left"
+              class="p-button-sm p-button-text"
+              pTooltip="Move to In Progress"
+              (click)="changeTaskStatus(task, statusOptions[1].value)"
+            ></button>
+          </div>
+        </div>
+        <div *ngIf="doneTasks().length === 0" class="empty-column">
+          <i class="pi pi-inbox"></i>
+          <p>No tasks</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #loadingTemplate>
+    <div class="loading-state">
+      <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+      <p>Loading tasks...</p>
+    </div>
+  </ng-template>
+
+  <!-- Create/Edit Dialog -->
+  <p-dialog
+    [visible]="dialogVisible()"
+    (visibleChange)="dialogVisible.set($event)"
+    [header]="editMode() ? 'Edit Task' : 'Create Task'"
+    [modal]="true"
+    [style]="{ width: '600px' }"
+    [draggable]="false"
+    [resizable]="false"
+  >
+    <div class="dialog-content">
+      <div class="field">
+        <label for="title">Title *</label>
+        <input
+          id="title"
+          type="text"
+          pInputText
+          [(ngModel)]="taskForm.title"
+          placeholder="Enter task title"
+          class="w-full"
+          autofocus
+        />
+      </div>
+
+      <div class="field">
+        <label for="description">Description</label>
+        <textarea
+          id="description"
+          pInputTextarea
+          [(ngModel)]="taskForm.description"
+          placeholder="Enter task description"
+          [rows]="4"
+          class="w-full"
+        ></textarea>
+      </div>
+
+      <div class="field">
+        <label for="status">Status</label>
+        <p-dropdown
+          id="status"
+          [(ngModel)]="taskForm.status"
+          [options]="statusOptions"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Select status"
+          class="w-full"
+        ></p-dropdown>
+      </div>
+
+      <div class="field">
+        <label for="dueDate">Due Date</label>
+        <p-calendar
+          id="dueDate"
+          [(ngModel)]="taskForm.dueDate"
+          [showIcon]="true"
+          dateFormat="yy-mm-dd"
+          placeholder="Select due date"
+          class="w-full"
+        ></p-calendar>
+      </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <button
+        pButton
+        label="Cancel"
+        icon="pi pi-times"
+        class="p-button-text"
+        (click)="closeDialog()"
+      ></button>
+      <button
+        pButton
+        [label]="editMode() ? 'Update' : 'Create'"
+        icon="pi pi-check"
+        (click)="saveTask()"
+      ></button>
+    </ng-template>
+  </p-dialog>
+</div>

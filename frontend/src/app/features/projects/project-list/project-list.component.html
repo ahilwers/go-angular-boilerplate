@@ -1,0 +1,147 @@
+<div class="project-list-container">
+  <p-toast></p-toast>
+  <p-confirmDialog></p-confirmDialog>
+
+  <p-card>
+    <ng-template pTemplate="header">
+      <div class="card-header">
+        <h2>Projects</h2>
+        <button
+          pButton
+          label="New Project"
+          icon="pi pi-plus"
+          (click)="openCreateDialog()"
+        ></button>
+      </div>
+    </ng-template>
+
+    <p-table
+      [value]="projects()"
+      [loading]="loading()"
+      [lazy]="true"
+      (onLazyLoad)="loadProjects($event)"
+      [paginator]="true"
+      [rows]="10"
+      [totalRecords]="totalRecords()"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} projects"
+      [rowsPerPageOptions]="[10, 25, 50]"
+      styleClass="p-datatable-striped"
+      [globalFilterFields]="['name', 'description']"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="name">
+            Name <p-sortIcon field="name"></p-sortIcon>
+          </th>
+          <th pSortableColumn="description">Description</th>
+          <th pSortableColumn="createdAt">
+            Created <p-sortIcon field="createdAt"></p-sortIcon>
+          </th>
+          <th>Actions</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-project>
+        <tr>
+          <td>
+            <strong>{{ project.name }}</strong>
+          </td>
+          <td>{{ project.description || '-' }}</td>
+          <td>{{ project.createdAt | date:'short' }}</td>
+          <td>
+            <div class="action-buttons">
+              <button
+                pButton
+                icon="pi pi-list"
+                class="p-button-rounded p-button-text p-button-info"
+                pTooltip="View Tasks"
+                tooltipPosition="top"
+                (click)="viewTasks(project)"
+              ></button>
+              <button
+                pButton
+                icon="pi pi-pencil"
+                class="p-button-rounded p-button-text p-button-warning"
+                pTooltip="Edit"
+                tooltipPosition="top"
+                (click)="openEditDialog(project)"
+              ></button>
+              <button
+                pButton
+                icon="pi pi-trash"
+                class="p-button-rounded p-button-text p-button-danger"
+                pTooltip="Delete"
+                tooltipPosition="top"
+                (click)="deleteProject(project)"
+              ></button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="4" class="text-center">
+            <div class="empty-state">
+              <i class="pi pi-inbox" style="font-size: 3rem; color: var(--text-color-secondary)"></i>
+              <p>No projects found. Create your first project to get started!</p>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+
+  <!-- Create/Edit Dialog -->
+  <p-dialog
+    [visible]="dialogVisible()"
+    (visibleChange)="dialogVisible.set($event)"
+    [header]="editMode() ? 'Edit Project' : 'Create Project'"
+    [modal]="true"
+    [style]="{ width: '500px' }"
+    [draggable]="false"
+    [resizable]="false"
+  >
+    <div class="dialog-content">
+      <div class="field">
+        <label for="name">Name *</label>
+        <input
+          id="name"
+          type="text"
+          pInputText
+          [(ngModel)]="projectForm.name"
+          placeholder="Enter project name"
+          class="w-full"
+          autofocus
+        />
+      </div>
+
+      <div class="field">
+        <label for="description">Description</label>
+        <textarea
+          id="description"
+          pInputTextarea
+          [(ngModel)]="projectForm.description"
+          placeholder="Enter project description"
+          [rows]="4"
+          class="w-full"
+        ></textarea>
+      </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <button
+        pButton
+        label="Cancel"
+        icon="pi pi-times"
+        class="p-button-text"
+        (click)="closeDialog()"
+      ></button>
+      <button
+        pButton
+        [label]="editMode() ? 'Update' : 'Create'"
+        icon="pi pi-check"
+        (click)="saveProject()"
+      ></button>
+    </ng-template>
+  </p-dialog>
+</div>

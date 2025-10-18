@@ -58,7 +58,7 @@ A client represents your application.
 - **Authentication flow**:
   - ✓ Standard flow
   - ✓ Direct access grants
-  - ✗ Implicit flow (deprecated)
+  - ✓ Implicit flow
   - ✗ Service accounts roles
 - Click **Next**
 

@@ -1,0 +1,52 @@
+<div class="layout-wrapper">
+  <!-- Header -->
+  <header class="layout-header">
+    <div class="header-left">
+      <button
+        pButton
+        icon="pi pi-bars"
+        class="p-button-text p-button-lg"
+        (click)="toggleSidebar()"
+        pTooltip="Toggle Menu"
+      ></button>
+      <h1 class="app-title">Todo App</h1>
+    </div>
+    <div class="header-right">
+      <p-avatar
+        [label]="displayName.charAt(0).toUpperCase()"
+        shape="circle"
+        size="large"
+        [style]="{ 'background-color': 'var(--primary-color)', 'color': '#ffffff', 'cursor': 'pointer' }"
+        (click)="userMenu.toggle($event)"
+        pTooltip="User Menu"
+      ></p-avatar>
+      <p-menu
+        #userMenu
+        [model]="userMenuItems"
+        [popup]="true"
+        appendTo="body"
+      ></p-menu>
+    </div>
+  </header>
+
+  <div class="layout-body">
+    <!-- Sidebar -->
+    <aside class="layout-sidebar" [class.collapsed]="!sidebarVisible()">
+      <nav class="sidebar-nav">
+        <p-menu [model]="menuItems" styleClass="sidebar-menu"></p-menu>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="layout-main">
+      <div class="content-wrapper">
+        <router-outlet></router-outlet>
+      </div>
+
+      <!-- Footer -->
+      <footer class="layout-footer">
+        <span>Logged in as: <strong>{{ displayName }}</strong></span>
+      </footer>
+    </main>
+  </div>
+</div>

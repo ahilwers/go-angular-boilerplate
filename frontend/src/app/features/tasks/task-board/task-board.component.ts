@@ -2,6 +2,7 @@ import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { CdkDragDrop, DragDropModule, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
@@ -24,6 +25,7 @@ import { Task, TaskStatus, CreateTaskDto, UpdateTaskDto } from '../../../core/mo
   imports: [
     CommonModule,
     FormsModule,
+    DragDropModule,
     CardModule,
     ButtonModule,
     DialogModule,
@@ -312,5 +314,17 @@ export class TaskBoardComponent implements OnInit {
       default:
         return 'info';
     }
+  }
+
+  onTaskDrop(event: CdkDragDrop<Task[]>, targetStatus: TaskStatus): void {
+    const task = event.item.data as Task;
+
+    // If task is dropped in the same column, do nothing
+    if (task.status === targetStatus) {
+      return;
+    }
+
+    // Update task status
+    this.changeTaskStatus(task, targetStatus);
   }
 }

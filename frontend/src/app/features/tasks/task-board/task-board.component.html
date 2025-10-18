@@ -33,10 +33,19 @@
           (click)="openCreateDialog(statusOptions[0].value)"
         ></button>
       </div>
-      <div class="column-tasks">
+      <div
+        class="column-tasks"
+        cdkDropList
+        [cdkDropListData]="todoTasks()"
+        (cdkDropListDropped)="onTaskDrop($event, statusOptions[0].value)"
+        [cdkDropListConnectedTo]="['in-progress-list', 'done-list']"
+        id="todo-list"
+      >
         <div
           *ngFor="let task of todoTasks()"
           class="task-card"
+          cdkDrag
+          [cdkDragData]="task"
         >
           <div class="task-header">
             <h4>{{ task.title }}</h4>
@@ -92,10 +101,19 @@
           (click)="openCreateDialog(statusOptions[1].value)"
         ></button>
       </div>
-      <div class="column-tasks">
+      <div
+        class="column-tasks"
+        cdkDropList
+        [cdkDropListData]="inProgressTasks()"
+        (cdkDropListDropped)="onTaskDrop($event, statusOptions[1].value)"
+        [cdkDropListConnectedTo]="['todo-list', 'done-list']"
+        id="in-progress-list"
+      >
         <div
           *ngFor="let task of inProgressTasks()"
           class="task-card in-progress"
+          cdkDrag
+          [cdkDragData]="task"
         >
           <div class="task-header">
             <h4>{{ task.title }}</h4>
@@ -160,10 +178,19 @@
           (click)="openCreateDialog(statusOptions[2].value)"
         ></button>
       </div>
-      <div class="column-tasks">
+      <div
+        class="column-tasks"
+        cdkDropList
+        [cdkDropListData]="doneTasks()"
+        (cdkDropListDropped)="onTaskDrop($event, statusOptions[2].value)"
+        [cdkDropListConnectedTo]="['todo-list', 'in-progress-list']"
+        id="done-list"
+      >
         <div
           *ngFor="let task of doneTasks()"
           class="task-card done"
+          cdkDrag
+          [cdkDragData]="task"
         >
           <div class="task-header">
             <h4>{{ task.title }}</h4>

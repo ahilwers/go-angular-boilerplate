@@ -16,7 +16,18 @@ body {
   margin: 0;
   background-color: #f8f9fa;
   color: #495057;
+  // Smooth transition when switching between light and dark modes
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+// Dark mode styles
+.dark-mode {
+  body {
+    background-color: #1e1e1e;
+    color: #e4e4e7;
+  }
 }
 
 // PrimeNG CSS variables will be injected by the theme system
 // The theme configuration is in app.config.ts
+// Dark mode is automatically applied based on system preferences via ThemeService

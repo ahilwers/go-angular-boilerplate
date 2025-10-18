@@ -18,7 +18,10 @@ export const appConfig: ApplicationConfig = {
       theme: {
         preset: Aura,
         options: {
-          darkModeSelector: '.dark-mode'
+          // Use class-based dark mode selector to work with our ThemeService
+          // The dark-mode class will be added/removed from <html> element
+          darkModeSelector: '.dark-mode',
+          cssLayer: false
         }
       }
     })

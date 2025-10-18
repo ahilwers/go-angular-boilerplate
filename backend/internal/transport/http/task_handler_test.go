@@ -246,6 +246,65 @@ func TestTaskHandler_Update(t *testing.T) {
 	}
 }
 
+func TestTaskHandler_UpdatePartial(t *testing.T) {
+	mockService := &mockTaskService{
+		findByIDFunc: func(id string) (entities.Task, error) {
+			if id == "task1" {
+				return entities.Task{
+					ID:          "task1",
+					ProjectID:   "123",
+					Title:       "Existing Title",
+					Status:      entities.TaskStatusTodo,
+					Description: "Existing Description",
+					CreatedAt:   time.Now(),
+				}, nil
+			}
+			return entities.Task{}, errors.New("not found")
+		},
+		updateFunc: func(task *entities.Task) error {
+			return nil
+		},
+	}
+
+	handler := NewTaskHandler(mockService, testLogger())
+
+	// Test status-only update (what the frontend sends when moving tasks)
+	reqBody := map[string]interface{}{
+		"status": "IN_PROGRESS",
+	}
+	body, _ := json.Marshal(reqBody)
+
+	req := httptest.NewRequest(http.MethodPut, "/api/v1/tasks/task1", bytes.NewReader(body))
+	req.SetPathValue("id", "task1")
+	w := httptest.NewRecorder()
+
+	handler.Update(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Errorf("expected status %d, got %d. Body: %s", http.StatusOK, w.Code, w.Body.String())
+	}
+
+	var task entities.Task
+	if err := json.NewDecoder(w.Body).Decode(&task); err != nil {
+		t.Fatalf("failed to decode response: %v", err)
+	}
+
+	// Title should be preserved from existing task
+	if task.Title != "Existing Title" {
+		t.Errorf("expected task title 'Existing Title', got '%s'", task.Title)
+	}
+
+	// Description should be preserved from existing task
+	if task.Description != "Existing Description" {
+		t.Errorf("expected description 'Existing Description', got '%s'", task.Description)
+	}
+
+	// Status should be updated
+	if task.Status != entities.TaskStatusInProgress {
+		t.Errorf("expected status 'IN_PROGRESS', got '%s'", task.Status)
+	}
+}
+
 func TestTaskHandler_Delete(t *testing.T) {
 	mockService := &mockTaskService{
 		deleteFunc: func(id string) error {

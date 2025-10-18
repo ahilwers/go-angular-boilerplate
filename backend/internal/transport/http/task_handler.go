@@ -121,26 +121,14 @@ func (h *TaskHandler) Update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var req struct {
-		Title       string     `json:"title"`
-		Status      string     `json:"status"`
+		Title       *string    `json:"title"`
+		Status      *string    `json:"status"`
 		DueDate     *time.Time `json:"due_date"`
-		Description string     `json:"description"`
+		Description *string    `json:"description"`
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		respondError(w, "Invalid request body", http.StatusBadRequest)
-		return
-	}
-
-	if req.Title == "" {
-		respondError(w, "Title is required", http.StatusBadRequest)
-		return
-	}
-
-	// Validate status
-	status, err := entities.ParseTaskStatus(req.Status)
-	if err != nil {
-		respondError(w, "Invalid status. Must be TODO, IN_PROGRESS, or DONE", http.StatusBadRequest)
 		return
 	}
 
@@ -152,14 +140,41 @@ func (h *TaskHandler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Start with existing values
 	task := &entities.Task{
 		ID:          id,
 		ProjectID:   existing.ProjectID,
-		Title:       req.Title,
-		Status:      status,
-		DueDate:     req.DueDate,
-		Description: req.Description,
+		Title:       existing.Title,
+		Status:      existing.Status,
+		DueDate:     existing.DueDate,
+		Description: existing.Description,
 		CreatedAt:   existing.CreatedAt,
+	}
+
+	// Update only provided fields
+	if req.Title != nil {
+		if *req.Title == "" {
+			respondError(w, "Title cannot be empty", http.StatusBadRequest)
+			return
+		}
+		task.Title = *req.Title
+	}
+
+	if req.Status != nil {
+		status, err := entities.ParseTaskStatus(*req.Status)
+		if err != nil {
+			respondError(w, "Invalid status. Must be TODO, IN_PROGRESS, or DONE", http.StatusBadRequest)
+			return
+		}
+		task.Status = status
+	}
+
+	if req.DueDate != nil {
+		task.DueDate = req.DueDate
+	}
+
+	if req.Description != nil {
+		task.Description = *req.Description
 	}
 
 	if err := h.service.Update(task); err != nil {

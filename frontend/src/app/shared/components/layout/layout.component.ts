@@ -1,11 +1,11 @@
 import { Component, signal, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
-import { MenuModule } from 'primeng/menu';
-import { AvatarModule } from 'primeng/avatar';
 import { TooltipModule } from 'primeng/tooltip';
-import { MenuItem } from 'primeng/api';
+import { SidebarMenuComponent } from '../sidebar-menu/sidebar-menu.component';
+import { UserMenuComponent } from '../user-menu/user-menu.component';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
@@ -14,10 +14,11 @@ import { AuthService } from '../../../core/services/auth.service';
   imports: [
     CommonModule,
     RouterModule,
+    TranslateModule,
     ButtonModule,
-    MenuModule,
-    AvatarModule,
-    TooltipModule
+    TooltipModule,
+    SidebarMenuComponent,
+    UserMenuComponent
   ],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.scss'
@@ -26,29 +27,21 @@ export class LayoutComponent implements OnInit {
   sidebarVisible = signal(true);
   isMobile = signal(false);
 
-  menuItems: MenuItem[] = [
-    {
-      label: 'Projects',
-      icon: 'pi pi-folder',
-      command: () => this.router.navigate(['/projects'])
-    }
-  ];
-
-  userMenuItems: MenuItem[] = [
-    {
-      label: 'Logout',
-      icon: 'pi pi-sign-out',
-      command: () => this.logout()
-    }
-  ];
-
-  constructor(
-    public authService: AuthService,
-    private router: Router
-  ) {}
+  constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
     this.checkScreenSize();
+  }
+
+  get displayName(): string {
+    const user = this.authService.user();
+    if (!user) return 'User';
+
+    return user.name ||
+           (user.given_name && user.family_name ? `${user.given_name} ${user.family_name}` : null) ||
+           user.preferred_username ||
+           user.email ||
+           'User';
   }
 
   @HostListener('window:resize', ['$event'])
@@ -71,20 +64,5 @@ export class LayoutComponent implements OnInit {
 
   toggleSidebar(): void {
     this.sidebarVisible.update(v => !v);
-  }
-
-  logout(): void {
-    this.authService.logout();
-  }
-
-  get displayName(): string {
-    const user = this.authService.user();
-    if (!user) return 'User';
-
-    return user.name ||
-           (user.given_name && user.family_name ? `${user.given_name} ${user.family_name}` : null) ||
-           user.preferred_username ||
-           user.email ||
-           'User';
   }
 }

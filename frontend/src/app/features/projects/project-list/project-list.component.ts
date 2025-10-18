@@ -1,7 +1,8 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
@@ -21,6 +22,7 @@ import { Project, CreateProjectDto, UpdateProjectDto } from '../../../core/model
   imports: [
     CommonModule,
     FormsModule,
+    TranslateModule,
     TableModule,
     ButtonModule,
     DialogModule,
@@ -36,6 +38,7 @@ import { Project, CreateProjectDto, UpdateProjectDto } from '../../../core/model
   styleUrl: './project-list.component.scss'
 })
 export class ProjectListComponent implements OnInit {
+  private readonly translate = inject(TranslateService);
   loading = signal(false);
   dialogVisible = signal(false);
   editMode = signal(false);
@@ -77,8 +80,8 @@ export class ProjectListComponent implements OnInit {
         this.loading.set(false);
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to load projects'
+          summary: this.translate.instant('ERRORS.ERROR'),
+          detail: this.translate.instant('PROJECTS.MESSAGES.ERROR_LOAD')
         });
         console.error('Failed to load projects:', err);
       }
@@ -118,8 +121,8 @@ export class ProjectListComponent implements OnInit {
     if (!this.projectForm.name.trim()) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'Validation Error',
-        detail: 'Project name is required'
+        summary: this.translate.instant('ERRORS.VALIDATION_ERROR'),
+        detail: this.translate.instant('PROJECTS.MESSAGES.VALIDATION_NAME_REQUIRED')
       });
       return;
     }
@@ -141,8 +144,8 @@ export class ProjectListComponent implements OnInit {
       next: () => {
         this.messageService.add({
           severity: 'success',
-          summary: 'Success',
-          detail: 'Project created successfully'
+          summary: this.translate.instant('ERRORS.SUCCESS'),
+          detail: this.translate.instant('PROJECTS.MESSAGES.CREATED')
         });
         this.closeDialog();
         this.reloadCurrentPage();
@@ -150,8 +153,8 @@ export class ProjectListComponent implements OnInit {
       error: (err) => {
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to create project'
+          summary: this.translate.instant('ERRORS.ERROR'),
+          detail: this.translate.instant('PROJECTS.MESSAGES.ERROR_CREATE')
         });
         console.error('Failed to create project:', err);
       }
@@ -170,8 +173,8 @@ export class ProjectListComponent implements OnInit {
       next: () => {
         this.messageService.add({
           severity: 'success',
-          summary: 'Success',
-          detail: 'Project updated successfully'
+          summary: this.translate.instant('ERRORS.SUCCESS'),
+          detail: this.translate.instant('PROJECTS.MESSAGES.UPDATED')
         });
         this.closeDialog();
         this.reloadCurrentPage();
@@ -179,8 +182,8 @@ export class ProjectListComponent implements OnInit {
       error: (err) => {
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to update project'
+          summary: this.translate.instant('ERRORS.ERROR'),
+          detail: this.translate.instant('PROJECTS.MESSAGES.ERROR_UPDATE')
         });
         console.error('Failed to update project:', err);
       }
@@ -189,24 +192,24 @@ export class ProjectListComponent implements OnInit {
 
   deleteProject(project: Project): void {
     this.confirmationService.confirm({
-      message: `Are you sure you want to delete "${project.name}"? This will also delete all associated tasks.`,
-      header: 'Confirm Delete',
+      message: this.translate.instant('PROJECTS.DELETE_CONFIRM'),
+      header: this.translate.instant('TASKS.CONFIRM_DELETE_HEADER'),
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.projectService.delete(project.id).subscribe({
           next: () => {
             this.messageService.add({
               severity: 'success',
-              summary: 'Success',
-              detail: 'Project deleted successfully'
+              summary: this.translate.instant('ERRORS.SUCCESS'),
+              detail: this.translate.instant('PROJECTS.MESSAGES.DELETED')
             });
             this.reloadCurrentPage();
           },
           error: (err) => {
             this.messageService.add({
               severity: 'error',
-              summary: 'Error',
-              detail: 'Failed to delete project'
+              summary: this.translate.instant('ERRORS.ERROR'),
+              detail: this.translate.instant('PROJECTS.MESSAGES.ERROR_DELETE')
             });
             console.error('Failed to delete project:', err);
           }

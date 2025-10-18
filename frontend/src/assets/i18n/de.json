@@ -1,0 +1,104 @@
+{
+  "APP": {
+    "TITLE": "Todo App"
+  },
+  "COMMON": {
+    "CANCEL": "Abbrechen",
+    "CREATE": "Erstellen",
+    "UPDATE": "Aktualisieren",
+    "DELETE": "Löschen",
+    "EDIT": "Bearbeiten",
+    "ACTIONS": "Aktionen",
+    "NAME": "Name",
+    "DESCRIPTION": "Beschreibung",
+    "CREATED": "Erstellt",
+    "LOADING": "Wird geladen...",
+    "NO_RESULTS": "Keine Ergebnisse gefunden"
+  },
+  "MENU": {
+    "TOGGLE": "Menü umschalten",
+    "USER": "Benutzermenü",
+    "PROJECTS": "Projekte",
+    "LOGOUT": "Abmelden"
+  },
+  "FOOTER": {
+    "LOGGED_IN_AS": "Angemeldet als:"
+  },
+  "PROJECTS": {
+    "TITLE": "Projekte",
+    "NEW": "Neues Projekt",
+    "CREATE": "Projekt erstellen",
+    "EDIT": "Projekt bearbeiten",
+    "VIEW_TASKS": "Aufgaben anzeigen",
+    "DELETE_CONFIRM": "Möchten Sie dieses Projekt wirklich löschen?",
+    "PAGE_REPORT": "Zeige {first} bis {last} von {totalRecords} Projekten",
+    "EMPTY_MESSAGE": "Keine Projekte gefunden. Erstellen Sie Ihr erstes Projekt, um zu beginnen!",
+    "FORM": {
+      "NAME_LABEL": "Name *",
+      "NAME_PLACEHOLDER": "Projektnamen eingeben",
+      "DESCRIPTION_LABEL": "Beschreibung",
+      "DESCRIPTION_PLACEHOLDER": "Projektbeschreibung eingeben"
+    },
+    "MESSAGES": {
+      "CREATED": "Projekt erfolgreich erstellt",
+      "UPDATED": "Projekt erfolgreich aktualisiert",
+      "DELETED": "Projekt erfolgreich gelöscht",
+      "ERROR_LOAD": "Projekte konnten nicht geladen werden",
+      "ERROR_CREATE": "Projekt konnte nicht erstellt werden",
+      "ERROR_UPDATE": "Projekt konnte nicht aktualisiert werden",
+      "ERROR_DELETE": "Projekt konnte nicht gelöscht werden",
+      "VALIDATION_NAME_REQUIRED": "Projektname ist erforderlich"
+    }
+  },
+  "TASKS": {
+    "TITLE": "Aufgaben",
+    "BACK_TO_PROJECTS": "Zurück zu Projekten",
+    "ADD_TASK": "Aufgabe hinzufügen",
+    "CREATE": "Aufgabe erstellen",
+    "EDIT": "Aufgabe bearbeiten",
+    "NO_TASKS": "Keine Aufgaben",
+    "DELETE_CONFIRM": "Möchten Sie \"{title}\" wirklich löschen?",
+    "CONFIRM_DELETE_HEADER": "Löschen bestätigen",
+    "LOADING_TASKS": "Aufgaben werden geladen...",
+    "STATUS": {
+      "TODO": "Zu erledigen",
+      "IN_PROGRESS": "In Bearbeitung",
+      "DONE": "Erledigt"
+    },
+    "ACTIONS": {
+      "START": "Starten",
+      "COMPLETE": "Fertigstellen",
+      "MOVE_TO_TODO": "Zu \"Zu erledigen\" verschieben",
+      "MOVE_TO_IN_PROGRESS": "Zu \"In Bearbeitung\" verschieben"
+    },
+    "FORM": {
+      "TITLE_LABEL": "Titel *",
+      "TITLE_PLACEHOLDER": "Aufgabentitel eingeben",
+      "DESCRIPTION_LABEL": "Beschreibung",
+      "DESCRIPTION_PLACEHOLDER": "Aufgabenbeschreibung eingeben",
+      "STATUS_LABEL": "Status",
+      "STATUS_PLACEHOLDER": "Status auswählen",
+      "DUE_DATE_LABEL": "Fälligkeitsdatum",
+      "DUE_DATE_PLACEHOLDER": "Fälligkeitsdatum auswählen"
+    },
+    "MESSAGES": {
+      "CREATED": "Aufgabe erfolgreich erstellt",
+      "UPDATED": "Aufgabe erfolgreich aktualisiert",
+      "DELETED": "Aufgabe erfolgreich gelöscht",
+      "STATUS_UPDATED": "Aufgabenstatus aktualisiert",
+      "ERROR_LOAD_PROJECT": "Projekt konnte nicht geladen werden",
+      "ERROR_LOAD": "Aufgaben konnten nicht geladen werden",
+      "ERROR_CREATE": "Aufgabe konnte nicht erstellt werden",
+      "ERROR_UPDATE": "Aufgabe konnte nicht aktualisiert werden",
+      "ERROR_DELETE": "Aufgabe konnte nicht gelöscht werden",
+      "ERROR_STATUS": "Aufgabenstatus konnte nicht aktualisiert werden",
+      "VALIDATION_TITLE_REQUIRED": "Aufgabentitel ist erforderlich"
+    }
+  },
+  "ERRORS": {
+    "ERROR": "Fehler",
+    "SUCCESS": "Erfolg",
+    "WARNING": "Warnung",
+    "VALIDATION_ERROR": "Validierungsfehler"
+  }
+}

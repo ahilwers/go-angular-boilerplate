@@ -1,7 +1,8 @@
-import { Component, OnInit, signal, computed } from '@angular/core';
+import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CdkDragDrop, DragDropModule, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
@@ -25,6 +26,7 @@ import { Task, TaskStatus, CreateTaskDto, UpdateTaskDto } from '../../../core/mo
   imports: [
     CommonModule,
     FormsModule,
+    TranslateModule,
     DragDropModule,
     CardModule,
     ButtonModule,
@@ -43,6 +45,7 @@ import { Task, TaskStatus, CreateTaskDto, UpdateTaskDto } from '../../../core/mo
   styleUrl: './task-board.component.scss'
 })
 export class TaskBoardComponent implements OnInit {
+  private readonly translate = inject(TranslateService);
   projectId = signal<string | null>(null);
   project = computed(() => {
     const id = this.projectId();
@@ -71,9 +74,9 @@ export class TaskBoardComponent implements OnInit {
   };
 
   statusOptions = [
-    { label: 'To Do', value: TaskStatus.TODO },
-    { label: 'In Progress', value: TaskStatus.IN_PROGRESS },
-    { label: 'Done', value: TaskStatus.DONE }
+    { label: this.translate.instant('TASKS.STATUS.TODO'), value: TaskStatus.TODO },
+    { label: this.translate.instant('TASKS.STATUS.IN_PROGRESS'), value: TaskStatus.IN_PROGRESS },
+    { label: this.translate.instant('TASKS.STATUS.DONE'), value: TaskStatus.DONE }
   ];
 
   constructor(
@@ -102,8 +105,8 @@ export class TaskBoardComponent implements OnInit {
         error: (err) => {
           this.messageService.add({
             severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to load project'
+            summary: this.translate.instant('ERRORS.ERROR'),
+            detail: this.translate.instant('TASKS.MESSAGES.ERROR_LOAD_PROJECT')
           });
           console.error('Failed to load project:', err);
           this.router.navigate(['/projects']);
@@ -122,8 +125,8 @@ export class TaskBoardComponent implements OnInit {
         this.loading.set(false);
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to load tasks'
+          summary: this.translate.instant('ERRORS.ERROR'),
+          detail: this.translate.instant('TASKS.MESSAGES.ERROR_LOAD')
         });
         console.error('Failed to load tasks:', err);
       }
@@ -169,8 +172,8 @@ export class TaskBoardComponent implements OnInit {
     if (!this.taskForm.title.trim()) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'Validation Error',
-        detail: 'Task title is required'
+        summary: this.translate.instant('ERRORS.VALIDATION_ERROR'),
+        detail: this.translate.instant('TASKS.MESSAGES.VALIDATION_TITLE_REQUIRED')
       });
       return;
     }
@@ -198,16 +201,16 @@ export class TaskBoardComponent implements OnInit {
       next: () => {
         this.messageService.add({
           severity: 'success',
-          summary: 'Success',
-          detail: 'Task created successfully'
+          summary: this.translate.instant('ERRORS.SUCCESS'),
+          detail: this.translate.instant('TASKS.MESSAGES.CREATED')
         });
         this.closeDialog();
       },
       error: (err) => {
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to create task'
+          summary: this.translate.instant('ERRORS.ERROR'),
+          detail: this.translate.instant('TASKS.MESSAGES.ERROR_CREATE')
         });
         console.error('Failed to create task:', err);
       }
@@ -228,16 +231,16 @@ export class TaskBoardComponent implements OnInit {
       next: () => {
         this.messageService.add({
           severity: 'success',
-          summary: 'Success',
-          detail: 'Task updated successfully'
+          summary: this.translate.instant('ERRORS.SUCCESS'),
+          detail: this.translate.instant('TASKS.MESSAGES.UPDATED')
         });
         this.closeDialog();
       },
       error: (err) => {
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to update task'
+          summary: this.translate.instant('ERRORS.ERROR'),
+          detail: this.translate.instant('TASKS.MESSAGES.ERROR_UPDATE')
         });
         console.error('Failed to update task:', err);
       }
@@ -246,23 +249,23 @@ export class TaskBoardComponent implements OnInit {
 
   deleteTask(task: Task): void {
     this.confirmationService.confirm({
-      message: `Are you sure you want to delete "${task.title}"?`,
-      header: 'Confirm Delete',
+      message: this.translate.instant('TASKS.DELETE_CONFIRM', { title: task.title }),
+      header: this.translate.instant('TASKS.CONFIRM_DELETE_HEADER'),
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.taskService.delete(task.id).subscribe({
           next: () => {
             this.messageService.add({
               severity: 'success',
-              summary: 'Success',
-              detail: 'Task deleted successfully'
+              summary: this.translate.instant('ERRORS.SUCCESS'),
+              detail: this.translate.instant('TASKS.MESSAGES.DELETED')
             });
           },
           error: (err) => {
             this.messageService.add({
               severity: 'error',
-              summary: 'Error',
-              detail: 'Failed to delete task'
+              summary: this.translate.instant('ERRORS.ERROR'),
+              detail: this.translate.instant('TASKS.MESSAGES.ERROR_DELETE')
             });
             console.error('Failed to delete task:', err);
           }
@@ -278,15 +281,15 @@ export class TaskBoardComponent implements OnInit {
       next: () => {
         this.messageService.add({
           severity: 'success',
-          summary: 'Success',
-          detail: 'Task status updated'
+          summary: this.translate.instant('ERRORS.SUCCESS'),
+          detail: this.translate.instant('TASKS.MESSAGES.STATUS_UPDATED')
         });
       },
       error: (err) => {
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to update task status'
+          summary: this.translate.instant('ERRORS.ERROR'),
+          detail: this.translate.instant('TASKS.MESSAGES.ERROR_STATUS')
         });
         console.error('Failed to update task status:', err);
       }

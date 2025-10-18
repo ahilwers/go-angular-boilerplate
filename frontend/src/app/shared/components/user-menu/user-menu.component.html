@@ -1,0 +1,14 @@
+<p-avatar
+  [label]="displayName.charAt(0).toUpperCase()"
+  shape="circle"
+  size="large"
+  [style]="{ 'background-color': 'var(--primary-color)', 'color': '#ffffff', 'cursor': 'pointer' }"
+  (click)="menu.toggle($event)"
+  [pTooltip]="'MENU.USER' | translate"
+></p-avatar>
+<p-menu
+  #menu
+  [model]="userMenuItems"
+  [popup]="true"
+  appendTo="body"
+></p-menu>

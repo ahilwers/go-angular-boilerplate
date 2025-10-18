@@ -4,12 +4,13 @@ Modern Angular 18+ frontend application for the Todo App boilerplate with Keyclo
 
 ## Features
 
-- **Angular 18+** with standalone components
+- **[Angular 18+](https://angular.dev)** with standalone components
 - **Angular Signals** for reactive state management
-- **PrimeNG** UI component library
-- **OpenID Connect / Keycloak** authentication
+- **[PrimeNG](https://primeng.org)** UI component library
+- **OpenID Connect / [Keycloak](https://www.keycloak.org)** authentication
 - **Responsive Design** with clean, modern UI
 - **Clean Architecture** with separation of concerns
+- **Localization Support** through [ngx-translate](https://ngx-translate.org)
 
 ## Project Structure
 

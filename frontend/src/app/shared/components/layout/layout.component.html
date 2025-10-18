@@ -7,25 +7,12 @@
         icon="pi pi-bars"
         class="p-button-text p-button-lg"
         (click)="toggleSidebar()"
-        pTooltip="Toggle Menu"
+        [pTooltip]="'MENU.TOGGLE' | translate"
       ></button>
-      <h1 class="app-title">Todo App</h1>
+      <h1 class="app-title">{{ 'APP.TITLE' | translate }}</h1>
     </div>
     <div class="header-right">
-      <p-avatar
-        [label]="displayName.charAt(0).toUpperCase()"
-        shape="circle"
-        size="large"
-        [style]="{ 'background-color': 'var(--primary-color)', 'color': '#ffffff', 'cursor': 'pointer' }"
-        (click)="userMenu.toggle($event)"
-        pTooltip="User Menu"
-      ></p-avatar>
-      <p-menu
-        #userMenu
-        [model]="userMenuItems"
-        [popup]="true"
-        appendTo="body"
-      ></p-menu>
+      <app-user-menu></app-user-menu>
     </div>
   </header>
 
@@ -40,7 +27,7 @@
     <!-- Sidebar -->
     <aside class="layout-sidebar" [class.collapsed]="!sidebarVisible()">
       <nav class="sidebar-nav">
-        <p-menu [model]="menuItems" styleClass="sidebar-menu"></p-menu>
+        <app-sidebar-menu></app-sidebar-menu>
       </nav>
     </aside>
 
@@ -52,7 +39,7 @@
 
       <!-- Footer -->
       <footer class="layout-footer">
-        <span>Logged in as: <strong>{{ displayName }}</strong></span>
+        <span>{{ 'FOOTER.LOGGED_IN_AS' | translate }} <strong>{{ displayName }}</strong></span>
       </footer>
     </main>
   </div>

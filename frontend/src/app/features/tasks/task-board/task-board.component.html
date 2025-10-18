@@ -6,7 +6,7 @@
     <button
       pButton
       icon="pi pi-arrow-left"
-      label="Back to Projects"
+      [label]="'TASKS.BACK_TO_PROJECTS' | translate"
       class="p-button-text"
       (click)="backToProjects()"
     ></button>
@@ -22,14 +22,14 @@
       <div class="column-header todo-header">
         <div class="column-title">
           <i class="pi pi-circle"></i>
-          <h3>To Do</h3>
+          <h3>{{ 'TASKS.STATUS.TODO' | translate }}</h3>
           <span class="task-count">{{ todoTasks().length }}</span>
         </div>
         <button
           pButton
           icon="pi pi-plus"
           class="p-button-rounded p-button-text"
-          pTooltip="Add Task"
+          [pTooltip]="'TASKS.ADD_TASK' | translate"
           (click)="openCreateDialog(statusOptions[0].value)"
         ></button>
       </div>
@@ -71,7 +71,7 @@
             </span>
             <button
               pButton
-              label="Start"
+              [label]="'TASKS.ACTIONS.START' | translate"
               icon="pi pi-play"
               class="p-button-sm p-button-outlined"
               (click)="changeTaskStatus(task, statusOptions[1].value)"
@@ -80,7 +80,7 @@
         </div>
         <div *ngIf="todoTasks().length === 0" class="empty-column">
           <i class="pi pi-inbox"></i>
-          <p>No tasks</p>
+          <p>{{ 'TASKS.NO_TASKS' | translate }}</p>
         </div>
       </div>
     </div>
@@ -90,14 +90,14 @@
       <div class="column-header in-progress-header">
         <div class="column-title">
           <i class="pi pi-sync"></i>
-          <h3>In Progress</h3>
+          <h3>{{ 'TASKS.STATUS.IN_PROGRESS' | translate }}</h3>
           <span class="task-count">{{ inProgressTasks().length }}</span>
         </div>
         <button
           pButton
           icon="pi pi-plus"
           class="p-button-rounded p-button-text"
-          pTooltip="Add Task"
+          [pTooltip]="'TASKS.ADD_TASK' | translate"
           (click)="openCreateDialog(statusOptions[1].value)"
         ></button>
       </div>
@@ -142,14 +142,14 @@
                 pButton
                 icon="pi pi-arrow-left"
                 class="p-button-sm p-button-text"
-                pTooltip="Move to To Do"
+                [pTooltip]="'TASKS.ACTIONS.MOVE_TO_TODO' | translate"
                 (click)="changeTaskStatus(task, statusOptions[0].value)"
               ></button>
               <button
                 pButton
                 icon="pi pi-check"
                 class="p-button-sm p-button-success"
-                pTooltip="Complete"
+                [pTooltip]="'TASKS.ACTIONS.COMPLETE' | translate"
                 (click)="changeTaskStatus(task, statusOptions[2].value)"
               ></button>
             </div>
@@ -157,7 +157,7 @@
         </div>
         <div *ngIf="inProgressTasks().length === 0" class="empty-column">
           <i class="pi pi-inbox"></i>
-          <p>No tasks</p>
+          <p>{{ 'TASKS.NO_TASKS' | translate }}</p>
         </div>
       </div>
     </div>
@@ -167,14 +167,14 @@
       <div class="column-header done-header">
         <div class="column-title">
           <i class="pi pi-check-circle"></i>
-          <h3>Done</h3>
+          <h3>{{ 'TASKS.STATUS.DONE' | translate }}</h3>
           <span class="task-count">{{ doneTasks().length }}</span>
         </div>
         <button
           pButton
           icon="pi pi-plus"
           class="p-button-rounded p-button-text"
-          pTooltip="Add Task"
+          [pTooltip]="'TASKS.ADD_TASK' | translate"
           (click)="openCreateDialog(statusOptions[2].value)"
         ></button>
       </div>
@@ -218,14 +218,14 @@
               pButton
               icon="pi pi-arrow-left"
               class="p-button-sm p-button-text"
-              pTooltip="Move to In Progress"
+              [pTooltip]="'TASKS.ACTIONS.MOVE_TO_IN_PROGRESS' | translate"
               (click)="changeTaskStatus(task, statusOptions[1].value)"
             ></button>
           </div>
         </div>
         <div *ngIf="doneTasks().length === 0" class="empty-column">
           <i class="pi pi-inbox"></i>
-          <p>No tasks</p>
+          <p>{{ 'TASKS.NO_TASKS' | translate }}</p>
         </div>
       </div>
     </div>
@@ -234,7 +234,7 @@
   <ng-template #loadingTemplate>
     <div class="loading-state">
       <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
-      <p>Loading tasks...</p>
+      <p>{{ 'TASKS.LOADING_TASKS' | translate }}</p>
     </div>
   </ng-template>
 
@@ -242,7 +242,7 @@
   <p-dialog
     [visible]="dialogVisible()"
     (visibleChange)="dialogVisible.set($event)"
-    [header]="editMode() ? 'Edit Task' : 'Create Task'"
+    [header]="(editMode() ? 'TASKS.EDIT' : 'TASKS.CREATE') | translate"
     [modal]="true"
     [style]="{ width: '600px' }"
     [draggable]="false"
@@ -250,51 +250,51 @@
   >
     <div class="dialog-content">
       <div class="field">
-        <label for="title">Title *</label>
+        <label for="title">{{ 'TASKS.FORM.TITLE_LABEL' | translate }}</label>
         <input
           id="title"
           type="text"
           pInputText
           [(ngModel)]="taskForm.title"
-          placeholder="Enter task title"
+          [placeholder]="'TASKS.FORM.TITLE_PLACEHOLDER' | translate"
           class="w-full"
           autofocus
         />
       </div>
 
       <div class="field">
-        <label for="description">Description</label>
+        <label for="description">{{ 'TASKS.FORM.DESCRIPTION_LABEL' | translate }}</label>
         <textarea
           id="description"
           pInputTextarea
           [(ngModel)]="taskForm.description"
-          placeholder="Enter task description"
+          [placeholder]="'TASKS.FORM.DESCRIPTION_PLACEHOLDER' | translate"
           [rows]="4"
           class="w-full"
         ></textarea>
       </div>
 
       <div class="field">
-        <label for="status">Status</label>
+        <label for="status">{{ 'TASKS.FORM.STATUS_LABEL' | translate }}</label>
         <p-dropdown
           id="status"
           [(ngModel)]="taskForm.status"
           [options]="statusOptions"
           optionLabel="label"
           optionValue="value"
-          placeholder="Select status"
+          [placeholder]="'TASKS.FORM.STATUS_PLACEHOLDER' | translate"
           class="w-full"
         ></p-dropdown>
       </div>
 
       <div class="field">
-        <label for="dueDate">Due Date</label>
+        <label for="dueDate">{{ 'TASKS.FORM.DUE_DATE_LABEL' | translate }}</label>
         <p-calendar
           id="dueDate"
           [(ngModel)]="taskForm.dueDate"
           [showIcon]="true"
           dateFormat="yy-mm-dd"
-          placeholder="Select due date"
+          [placeholder]="'TASKS.FORM.DUE_DATE_PLACEHOLDER' | translate"
           class="w-full"
         ></p-calendar>
       </div>
@@ -303,14 +303,14 @@
     <ng-template pTemplate="footer">
       <button
         pButton
-        label="Cancel"
+        [label]="'COMMON.CANCEL' | translate"
         icon="pi pi-times"
         class="p-button-text"
         (click)="closeDialog()"
       ></button>
       <button
         pButton
-        [label]="editMode() ? 'Update' : 'Create'"
+        [label]="(editMode() ? 'COMMON.UPDATE' : 'COMMON.CREATE') | translate"
         icon="pi pi-check"
         (click)="saveTask()"
       ></button>

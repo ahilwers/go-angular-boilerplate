@@ -1,0 +1,104 @@
+{
+  "APP": {
+    "TITLE": "Todo App"
+  },
+  "COMMON": {
+    "CANCEL": "Cancel",
+    "CREATE": "Create",
+    "UPDATE": "Update",
+    "DELETE": "Delete",
+    "EDIT": "Edit",
+    "ACTIONS": "Actions",
+    "NAME": "Name",
+    "DESCRIPTION": "Description",
+    "CREATED": "Created",
+    "LOADING": "Loading...",
+    "NO_RESULTS": "No results found"
+  },
+  "MENU": {
+    "TOGGLE": "Toggle Menu",
+    "USER": "User Menu",
+    "PROJECTS": "Projects",
+    "LOGOUT": "Logout"
+  },
+  "FOOTER": {
+    "LOGGED_IN_AS": "Logged in as:"
+  },
+  "PROJECTS": {
+    "TITLE": "Projects",
+    "NEW": "New Project",
+    "CREATE": "Create Project",
+    "EDIT": "Edit Project",
+    "VIEW_TASKS": "View Tasks",
+    "DELETE_CONFIRM": "Are you sure you want to delete this project?",
+    "PAGE_REPORT": "Showing {first} to {last} of {totalRecords} projects",
+    "EMPTY_MESSAGE": "No projects found. Create your first project to get started!",
+    "FORM": {
+      "NAME_LABEL": "Name *",
+      "NAME_PLACEHOLDER": "Enter project name",
+      "DESCRIPTION_LABEL": "Description",
+      "DESCRIPTION_PLACEHOLDER": "Enter project description"
+    },
+    "MESSAGES": {
+      "CREATED": "Project created successfully",
+      "UPDATED": "Project updated successfully",
+      "DELETED": "Project deleted successfully",
+      "ERROR_LOAD": "Failed to load projects",
+      "ERROR_CREATE": "Failed to create project",
+      "ERROR_UPDATE": "Failed to update project",
+      "ERROR_DELETE": "Failed to delete project",
+      "VALIDATION_NAME_REQUIRED": "Project name is required"
+    }
+  },
+  "TASKS": {
+    "TITLE": "Tasks",
+    "BACK_TO_PROJECTS": "Back to Projects",
+    "ADD_TASK": "Add Task",
+    "CREATE": "Create Task",
+    "EDIT": "Edit Task",
+    "NO_TASKS": "No tasks",
+    "DELETE_CONFIRM": "Are you sure you want to delete \"{title}\"?",
+    "CONFIRM_DELETE_HEADER": "Confirm Delete",
+    "LOADING_TASKS": "Loading tasks...",
+    "STATUS": {
+      "TODO": "To Do",
+      "IN_PROGRESS": "In Progress",
+      "DONE": "Done"
+    },
+    "ACTIONS": {
+      "START": "Start",
+      "COMPLETE": "Complete",
+      "MOVE_TO_TODO": "Move to To Do",
+      "MOVE_TO_IN_PROGRESS": "Move to In Progress"
+    },
+    "FORM": {
+      "TITLE_LABEL": "Title *",
+      "TITLE_PLACEHOLDER": "Enter task title",
+      "DESCRIPTION_LABEL": "Description",
+      "DESCRIPTION_PLACEHOLDER": "Enter task description",
+      "STATUS_LABEL": "Status",
+      "STATUS_PLACEHOLDER": "Select status",
+      "DUE_DATE_LABEL": "Due Date",
+      "DUE_DATE_PLACEHOLDER": "Select due date"
+    },
+    "MESSAGES": {
+      "CREATED": "Task created successfully",
+      "UPDATED": "Task updated successfully",
+      "DELETED": "Task deleted successfully",
+      "STATUS_UPDATED": "Task status updated",
+      "ERROR_LOAD_PROJECT": "Failed to load project",
+      "ERROR_LOAD": "Failed to load tasks",
+      "ERROR_CREATE": "Failed to create task",
+      "ERROR_UPDATE": "Failed to update task",
+      "ERROR_DELETE": "Failed to delete task",
+      "ERROR_STATUS": "Failed to update task status",
+      "VALIDATION_TITLE_REQUIRED": "Task title is required"
+    }
+  },
+  "ERRORS": {
+    "ERROR": "Error",
+    "SUCCESS": "Success",
+    "WARNING": "Warning",
+    "VALIDATION_ERROR": "Validation Error"
+  }
+}

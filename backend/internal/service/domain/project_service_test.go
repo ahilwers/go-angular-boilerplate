@@ -44,6 +44,14 @@ func (m *MockProjectRepository) FindAll() ([]entities.Project, error) {
 	return args.Get(0).([]entities.Project), args.Error(1)
 }
 
+func (m *MockProjectRepository) FindAllPaginated(limit, offset int) ([]entities.Project, int64, error) {
+	args := m.Called(limit, offset)
+	if args.Get(0) == nil {
+		return nil, args.Get(1).(int64), args.Error(2)
+	}
+	return args.Get(0).([]entities.Project), args.Get(1).(int64), args.Error(2)
+}
+
 func createTestProject() entities.Project {
 	return entities.Project{
 		ID:   "test-id",

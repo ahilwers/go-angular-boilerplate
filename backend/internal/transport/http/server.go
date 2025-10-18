@@ -16,7 +16,7 @@ type Server struct {
 	authMiddleware *auth.Middleware
 }
 
-func NewServer(cfg config.ServiceConfig, svc *service.Service, authMw *auth.Middleware, logger *slog.Logger) *Server {
+func NewServer(cfg config.ServiceConfig, corsCfg config.CORSConfig, svc *service.Service, authMw *auth.Middleware, logger *slog.Logger) *Server {
 	s := &Server{
 		logger:         logger,
 		authMiddleware: authMw,
@@ -47,8 +47,9 @@ func NewServer(cfg config.ServiceConfig, svc *service.Service, authMw *auth.Midd
 	apiMux.HandleFunc("PUT /api/v1/tasks/{id}", taskHandler.Update)
 	apiMux.HandleFunc("DELETE /api/v1/tasks/{id}", taskHandler.Delete)
 
-	// Apply middleware chain to API routes
-	apiHandler := s.loggingMiddleware(authMw.Authenticate(apiMux))
+	// Apply middleware chain to API routes: CORS -> Logging -> Auth
+	corsMiddleware := CORSMiddleware(corsCfg)
+	apiHandler := corsMiddleware(s.loggingMiddleware(authMw.Authenticate(apiMux)))
 	mux.Handle("/api/", apiHandler)
 
 	s.server = &http.Server{

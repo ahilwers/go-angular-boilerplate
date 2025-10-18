@@ -13,11 +13,12 @@ import (
 
 // Mock ProjectService for testing
 type mockProjectService struct {
-	insertFunc   func(*entities.Project) error
-	updateFunc   func(*entities.Project) error
-	deleteFunc   func(string) error
-	findByIDFunc func(string) (entities.Project, error)
-	findAllFunc  func() ([]entities.Project, error)
+	insertFunc           func(*entities.Project) error
+	updateFunc           func(*entities.Project) error
+	deleteFunc           func(string) error
+	findByIDFunc         func(string) (entities.Project, error)
+	findAllFunc          func() ([]entities.Project, error)
+	findAllPaginatedFunc func(int, int) ([]entities.Project, int64, error)
 }
 
 func (m *mockProjectService) Insert(project *entities.Project) error {
@@ -53,6 +54,13 @@ func (m *mockProjectService) FindAll() ([]entities.Project, error) {
 		return m.findAllFunc()
 	}
 	return []entities.Project{}, nil
+}
+
+func (m *mockProjectService) FindAllPaginated(limit, offset int) ([]entities.Project, int64, error) {
+	if m.findAllPaginatedFunc != nil {
+		return m.findAllPaginatedFunc(limit, offset)
+	}
+	return []entities.Project{}, 0, nil
 }
 
 func TestProjectHandler_List(t *testing.T) {

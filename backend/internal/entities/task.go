@@ -64,12 +64,12 @@ func ParseTaskStatus(s string) (TaskStatus, error) {
 }
 
 type Task struct {
-	ID          string
-	ProjectID   string
-	Title       string
-	Status      TaskStatus
-	DueDate     *time.Time
-	Description string
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+	ID          string     `json:"id"`
+	ProjectID   string     `json:"projectId"`
+	Title       string     `json:"title"`
+	Status      TaskStatus `json:"status"`
+	DueDate     *time.Time `json:"dueDate,omitempty"`
+	Description string     `json:"description"`
+	CreatedAt   time.Time  `json:"createdAt"`
+	UpdatedAt   time.Time  `json:"updatedAt"`
 }

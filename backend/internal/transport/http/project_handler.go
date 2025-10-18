@@ -23,14 +23,33 @@ func NewProjectHandler(svc service.ProjectService, logger *slog.Logger) *Project
 }
 
 // List handles GET /api/v1/projects
+// Supports optional pagination via query params: ?page=1&limit=10
 func (h *ProjectHandler) List(w http.ResponseWriter, r *http.Request) {
+	page, limit := parsePaginationParams(r)
+	if page > 0 && limit > 0 {
+		offset := (page - 1) * limit
+		projects, total, err := h.service.FindAllPaginated(limit, offset)
+		if err != nil {
+			h.logger.Error("failed to list projects", "error", err)
+			respondError(w, "Failed to list projects", http.StatusInternalServerError)
+			return
+		}
+
+		response := map[string]interface{}{
+			"data":  projects,
+			"total": total,
+			"page":  page,
+			"limit": limit,
+		}
+		respondJSON(w, response, http.StatusOK)
+		return
+	}
 	projects, err := h.service.FindAll()
 	if err != nil {
 		h.logger.Error("failed to list projects", "error", err)
 		respondError(w, "Failed to list projects", http.StatusInternalServerError)
 		return
 	}
-
 	respondJSON(w, projects, http.StatusOK)
 }
 
@@ -41,7 +60,6 @@ func (h *ProjectHandler) Get(w http.ResponseWriter, r *http.Request) {
 		respondError(w, "Missing project ID", http.StatusBadRequest)
 		return
 	}
-
 	project, err := h.service.FindByID(id)
 	if err != nil {
 		h.logger.Error("failed to get project", "id", id, "error", err)
@@ -146,4 +164,3 @@ func (h *ProjectHandler) Delete(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusNoContent)
 }
-

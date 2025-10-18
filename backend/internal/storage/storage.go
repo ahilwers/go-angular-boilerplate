@@ -28,6 +28,7 @@ type ProjectRepository interface {
 	Delete(id string) error
 	FindByID(id string) (entities.Project, error)
 	FindAll() ([]entities.Project, error)
+	FindAllPaginated(limit, offset int) ([]entities.Project, int64, error)
 }
 
 type Repository struct {

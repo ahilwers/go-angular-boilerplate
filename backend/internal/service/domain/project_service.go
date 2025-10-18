@@ -34,3 +34,7 @@ func (s *projectService) FindByID(id string) (entities.Project, error) {
 func (s *projectService) FindAll() ([]entities.Project, error) {
 	return s.projectRepo.FindAll()
 }
+
+func (s *projectService) FindAllPaginated(limit, offset int) ([]entities.Project, int64, error) {
+	return s.projectRepo.FindAllPaginated(limit, offset)
+}

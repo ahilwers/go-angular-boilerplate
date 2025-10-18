@@ -7,6 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"time"
 )
 
@@ -146,6 +147,38 @@ func (r *mongoDbProjectRepository) FindAll() ([]entities.Project, error) {
 	}
 
 	return projects, nil
+}
+
+func (r *mongoDbProjectRepository) FindAllPaginated(limit, offset int) ([]entities.Project, int64, error) {
+	// Get total count
+	total, err := r.collection.CountDocuments(r.ctx, bson.M{})
+	if err != nil {
+		return nil, 0, err
+	}
+
+	// Get paginated results
+	findOptions := options.Find()
+	findOptions.SetLimit(int64(limit))
+	findOptions.SetSkip(int64(offset))
+	findOptions.SetSort(bson.D{{Key: "created_at", Value: -1}}) // Sort by creation date, newest first
+
+	cursor, err := r.collection.Find(r.ctx, bson.M{}, findOptions)
+	if err != nil {
+		return nil, 0, err
+	}
+	defer cursor.Close(r.ctx)
+
+	var mongoProjects []mongoDbProject
+	if err := cursor.All(r.ctx, &mongoProjects); err != nil {
+		return nil, 0, err
+	}
+
+	projects := make([]entities.Project, len(mongoProjects))
+	for i, mongoProject := range mongoProjects {
+		projects[i] = fromMongoProject(mongoProject)
+	}
+
+	return projects, total, nil
 }
 
 func (r *mongoDbProjectRepository) FindByProjectID(projectID string) (entities.Project, error) {

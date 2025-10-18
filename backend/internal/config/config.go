@@ -9,6 +9,8 @@ type Config struct {
 	Database DatabaseConfig `yaml:"database" mapstructure:"database"`
 	Auth     AuthConfig     `yaml:"auth" mapstructure:"auth"`
 	Logging  LoggingConfig  `yaml:"logging" mapstructure:"logging"`
+	CORS     CORSConfig     `yaml:"cors" mapstructure:"cors"`
+	Seed     SeedConfig     `yaml:"seed" mapstructure:"seed"` // TEMPORARY - for seeding test data
 }
 
 type ServiceConfig struct {
@@ -43,6 +45,21 @@ type LoggingConfig struct {
 type LokiConfig struct {
 	URL         string `yaml:"url" mapstructure:"url"`
 	BearerToken string `yaml:"bearer_token,omitempty" mapstructure:"bearer_token"`
+}
+
+type CORSConfig struct {
+	AllowedOrigins   []string `yaml:"allowed_origins" mapstructure:"allowed_origins"`
+	AllowedMethods   []string `yaml:"allowed_methods" mapstructure:"allowed_methods"`
+	AllowedHeaders   []string `yaml:"allowed_headers" mapstructure:"allowed_headers"`
+	ExposedHeaders   []string `yaml:"exposed_headers" mapstructure:"exposed_headers"`
+	AllowCredentials bool     `yaml:"allow_credentials" mapstructure:"allow_credentials"`
+	MaxAge           int      `yaml:"max_age" mapstructure:"max_age"`
+}
+
+// TEMPORARY - SeedConfig controls database seeding for testing
+// DELETE this struct when seed functionality is removed
+type SeedConfig struct {
+	Enabled bool `yaml:"enabled" mapstructure:"enabled"`
 }
 
 func Load(configPath string) (*Config, error) {

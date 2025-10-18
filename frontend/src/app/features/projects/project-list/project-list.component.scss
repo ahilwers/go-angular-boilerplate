@@ -79,3 +79,82 @@
 .w-full {
   width: 100%;
 }
+
+.project-name-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  .project-description-mobile {
+    display: none;
+    font-size: 0.875rem;
+    color: var(--text-color-secondary);
+    font-weight: normal;
+  }
+}
+
+@media (max-width: 768px) {
+  .hide-on-mobile {
+    display: none !important;
+  }
+
+  .project-name-cell {
+    .project-description-mobile {
+      display: block;
+    }
+  }
+
+  .card-header {
+    padding: 1rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    h2 {
+      font-size: 1.25rem;
+    }
+
+    button {
+      font-size: 0.875rem;
+    }
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+
+    button {
+      width: 100%;
+    }
+  }
+
+  :host ::ng-deep {
+    .p-datatable {
+      .p-datatable-wrapper {
+        overflow-x: auto;
+      }
+
+      .p-datatable-thead > tr > th,
+      .p-datatable-tbody > tr > td {
+        padding: 0.75rem 0.5rem;
+      }
+    }
+
+    .p-paginator {
+      flex-wrap: wrap;
+      padding: 0.5rem;
+
+      .p-paginator-current {
+        order: -1;
+        width: 100%;
+        text-align: center;
+        margin-bottom: 0.5rem;
+        font-size: 0.875rem;
+      }
+    }
+
+    .p-dialog {
+      width: 95vw !important;
+      max-width: 500px;
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -22,8 +22,9 @@ import { AuthService } from '../../../core/services/auth.service';
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.scss'
 })
-export class LayoutComponent {
+export class LayoutComponent implements OnInit {
   sidebarVisible = signal(true);
+  isMobile = signal(false);
 
   menuItems: MenuItem[] = [
     {
@@ -45,6 +46,28 @@ export class LayoutComponent {
     public authService: AuthService,
     private router: Router
   ) {}
+
+  ngOnInit(): void {
+    this.checkScreenSize();
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(): void {
+    this.checkScreenSize();
+  }
+
+  private checkScreenSize(): void {
+    const width = window.innerWidth;
+    const mobile = width <= 768;
+    this.isMobile.set(mobile);
+
+    // Auto-hide sidebar on mobile, show on desktop
+    if (mobile) {
+      this.sidebarVisible.set(false);
+    } else {
+      this.sidebarVisible.set(true);
+    }
+  }
 
   toggleSidebar(): void {
     this.sidebarVisible.update(v => !v);

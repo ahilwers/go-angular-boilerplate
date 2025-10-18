@@ -30,6 +30,13 @@
   </header>
 
   <div class="layout-body">
+    <!-- Overlay for mobile when sidebar is open -->
+    <div
+      class="sidebar-overlay"
+      *ngIf="isMobile() && sidebarVisible()"
+      (click)="toggleSidebar()"
+    ></div>
+
     <!-- Sidebar -->
     <aside class="layout-sidebar" [class.collapsed]="!sidebarVisible()">
       <nav class="sidebar-nav">

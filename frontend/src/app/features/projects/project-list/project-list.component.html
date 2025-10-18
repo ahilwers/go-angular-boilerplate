@@ -34,8 +34,8 @@
           <th pSortableColumn="name">
             Name <p-sortIcon field="name"></p-sortIcon>
           </th>
-          <th pSortableColumn="description">Description</th>
-          <th pSortableColumn="createdAt">
+          <th pSortableColumn="description" class="hide-on-mobile">Description</th>
+          <th pSortableColumn="createdAt" class="hide-on-mobile">
             Created <p-sortIcon field="createdAt"></p-sortIcon>
           </th>
           <th>Actions</th>
@@ -44,10 +44,15 @@
       <ng-template pTemplate="body" let-project>
         <tr>
           <td>
-            <strong>{{ project.name }}</strong>
+            <div class="project-name-cell">
+              <strong>{{ project.name }}</strong>
+              <span class="project-description-mobile" *ngIf="project.description">
+                {{ project.description }}
+              </span>
+            </div>
           </td>
-          <td>{{ project.description || '-' }}</td>
-          <td>{{ project.createdAt | date:'short' }}</td>
+          <td class="hide-on-mobile">{{ project.description || '-' }}</td>
+          <td class="hide-on-mobile">{{ project.createdAt | date:'short' }}</td>
           <td>
             <div class="action-buttons">
               <button

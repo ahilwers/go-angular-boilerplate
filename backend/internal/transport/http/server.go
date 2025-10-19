@@ -16,7 +16,7 @@ type Server struct {
 	authMiddleware *auth.Middleware
 }
 
-func NewServer(cfg config.ServiceConfig, corsCfg config.CORSConfig, authCfg config.AuthConfig, docsCfg config.DocsConfig, svc *service.Service, authMw *auth.Middleware, logger *slog.Logger) *Server {
+func NewServer(cfg config.ServiceConfig, corsCfg config.CORSConfig, authCfg config.AuthConfig, docsCfg config.DocsConfig, rateLimitCfg config.RateLimitConfig, svc *service.Service, authMw *auth.Middleware, logger *slog.Logger) *Server {
 	s := &Server{
 		logger:         logger,
 		authMiddleware: authMw,
@@ -59,9 +59,24 @@ func NewServer(cfg config.ServiceConfig, corsCfg config.CORSConfig, authCfg conf
 	apiMux.HandleFunc("PUT /api/v1/tasks/{id}", taskHandler.Update)
 	apiMux.HandleFunc("DELETE /api/v1/tasks/{id}", taskHandler.Delete)
 
-	// Apply middleware chain to API routes: CORS -> Logging -> Auth
+	// Apply middleware chain to API routes: RateLimit -> CORS -> Logging -> Auth
 	corsMiddleware := CORSMiddleware(corsCfg)
-	apiHandler := corsMiddleware(s.loggingMiddleware(authMw.Authenticate(apiMux)))
+	var apiHandler http.Handler = authMw.Authenticate(apiMux)
+	apiHandler = s.loggingMiddleware(apiHandler)
+	apiHandler = corsMiddleware(apiHandler)
+
+	// Apply rate limiting if enabled
+	if rateLimitCfg.Enabled {
+		rateLimiter := NewRateLimiter(rateLimitCfg)
+		apiHandler = rateLimiter.Middleware()(apiHandler)
+		logger.Info("rate limiting enabled",
+			"requests_per_second", rateLimitCfg.RequestsPerSecond,
+			"burst", rateLimitCfg.Burst,
+		)
+	} else {
+		logger.Info("rate limiting disabled")
+	}
+
 	mux.Handle("/api/", apiHandler)
 
 	s.server = &http.Server{

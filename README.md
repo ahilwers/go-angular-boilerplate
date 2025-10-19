@@ -9,6 +9,7 @@ Production-ready monorepo boilerplate with a Go backend and Angular frontend. Fe
 - **RESTful API**: Full CRUD operations for projects and tasks under `/api/v1`
 - **MongoDB Persistence**: Official MongoDB driver with repository pattern
 - **Authentication**: Keycloak/OpenID Connect with JWT validation and JWKS support
+- **Rate Limiting**: Per-IP rate limiting using token bucket algorithm
 - **Configuration**: YAML/JSON config files with environment variable overrides
 - **Structured Logging**: `slog` with console and Loki handlers
 - **Comprehensive Tests**: Unit tests with mocks and integration tests with Testcontainers
@@ -168,6 +169,47 @@ Content-Type: application/json
 ```
 
 Task status values: `TODO`, `IN_PROGRESS`, `DONE`
+
+## Rate Limiting
+
+The API includes per-IP rate limiting to protect against abuse and ensure fair resource usage.
+
+### Configuration
+
+By default, rate limiting is **enabled** with the following settings:
+- **Requests per second**: 10
+- **Burst size**: 20
+
+Update `config/local.yaml` to customize:
+```yaml
+rate_limit:
+  enabled: true
+  requests_per_second: 10  # Sustained rate limit
+  burst: 20                # Allows temporary spikes
+```
+
+Or use environment variables:
+```bash
+RATE_LIMIT_ENABLED=true
+RATE_LIMIT_REQUESTS_PER_SECOND=10
+RATE_LIMIT_BURST=20
+```
+
+### How it works
+
+- Uses the **token bucket algorithm** via `golang.org/x/time/rate`
+- Rate limiting is applied **per IP address**
+- Supports `X-Forwarded-For` and `X-Real-IP` headers for proxies
+- Returns `429 Too Many Requests` when limit is exceeded
+- Applied to all `/api/*` routes (health checks are exempt)
+
+### Disabling rate limiting
+
+For development or testing, you can disable rate limiting:
+```yaml
+rate_limit:
+  enabled: false
+```
 
 ## Authentication
 

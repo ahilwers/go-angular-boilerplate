@@ -62,4 +62,9 @@ func setDefaults(v *viper.Viper) {
 	// Logging defaults
 	v.SetDefault("logging.level", "info")
 	v.SetDefault("logging.format", "console")
+
+	// Rate limit defaults
+	v.SetDefault("rate_limit.enabled", true)
+	v.SetDefault("rate_limit.requests_per_second", 10)
+	v.SetDefault("rate_limit.burst", 20)
 }

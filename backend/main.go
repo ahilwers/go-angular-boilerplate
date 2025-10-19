@@ -99,7 +99,7 @@ func main() {
 
 	authMiddleware := auth.NewMiddleware(cfg.Auth, appLogger)
 
-	httpServer := httpTransport.NewServer(cfg.Service, cfg.CORS, cfg.Auth, cfg.Docs, svc, authMiddleware, appLogger)
+	httpServer := httpTransport.NewServer(cfg.Service, cfg.CORS, cfg.Auth, cfg.Docs, cfg.RateLimit, svc, authMiddleware, appLogger)
 
 	serverErrors := make(chan error, 1)
 	go func() {

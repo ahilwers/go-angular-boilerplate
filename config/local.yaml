@@ -48,3 +48,8 @@ cors:
 
 docs:
   enabled: true # Set to false in production for security (hides API documentation)
+
+rate_limit:
+  enabled: true # Set to false to disable rate limiting
+  requests_per_second: 10 # Number of requests allowed per second per IP
+  burst: 20 # Maximum burst size (allows temporary spikes above RPS)

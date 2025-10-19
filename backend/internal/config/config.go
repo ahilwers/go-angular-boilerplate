@@ -5,12 +5,13 @@ import (
 )
 
 type Config struct {
-	Service  ServiceConfig  `yaml:"service" mapstructure:"service"`
-	Database DatabaseConfig `yaml:"database" mapstructure:"database"`
-	Auth     AuthConfig     `yaml:"auth" mapstructure:"auth"`
-	Logging  LoggingConfig  `yaml:"logging" mapstructure:"logging"`
-	CORS     CORSConfig     `yaml:"cors" mapstructure:"cors"`
-	Docs     DocsConfig     `yaml:"docs" mapstructure:"docs"`
+	Service   ServiceConfig    `yaml:"service" mapstructure:"service"`
+	Database  DatabaseConfig   `yaml:"database" mapstructure:"database"`
+	Auth      AuthConfig       `yaml:"auth" mapstructure:"auth"`
+	Logging   LoggingConfig    `yaml:"logging" mapstructure:"logging"`
+	CORS      CORSConfig       `yaml:"cors" mapstructure:"cors"`
+	Docs      DocsConfig       `yaml:"docs" mapstructure:"docs"`
+	RateLimit RateLimitConfig  `yaml:"rate_limit" mapstructure:"rate_limit"`
 }
 
 type ServiceConfig struct {
@@ -58,6 +59,12 @@ type CORSConfig struct {
 
 type DocsConfig struct {
 	Enabled bool `yaml:"enabled" mapstructure:"enabled"`
+}
+
+type RateLimitConfig struct {
+	Enabled           bool `yaml:"enabled" mapstructure:"enabled"`
+	RequestsPerSecond int  `yaml:"requests_per_second" mapstructure:"requests_per_second"`
+	Burst             int  `yaml:"burst" mapstructure:"burst"`
 }
 
 func Load(configPath string) (*Config, error) {

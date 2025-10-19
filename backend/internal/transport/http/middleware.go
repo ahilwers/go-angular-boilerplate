@@ -3,7 +3,9 @@ package http
 import (
 	"boilerplate/internal/config"
 	"fmt"
+	"log/slog"
 	"net/http"
+	"runtime/debug"
 	"strings"
 )
 
@@ -63,4 +65,30 @@ func isOriginAllowed(origin string, allowedOrigins []string) bool {
 		}
 	}
 	return false
+}
+
+// RecoveryMiddleware recovers from panics in HTTP handlers and returns a 500 error
+// instead of crashing the server. It logs the panic with stack trace for debugging.
+func RecoveryMiddleware(logger *slog.Logger) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			defer func() {
+				if err := recover(); err != nil {
+					// Log the panic with stack trace
+					logger.Error("panic recovered in HTTP handler",
+						"error", err,
+						"method", r.Method,
+						"path", r.URL.Path,
+						"remote_addr", r.RemoteAddr,
+						"stack", string(debug.Stack()),
+					)
+
+					// Return 500 Internal Server Error
+					http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+				}
+			}()
+
+			next.ServeHTTP(w, r)
+		})
+	}
 }

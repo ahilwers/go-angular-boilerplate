@@ -59,8 +59,9 @@ func NewServer(cfg config.ServiceConfig, corsCfg config.CORSConfig, authCfg conf
 	apiMux.HandleFunc("PUT /api/v1/tasks/{id}", taskHandler.Update)
 	apiMux.HandleFunc("DELETE /api/v1/tasks/{id}", taskHandler.Delete)
 
-	// Apply middleware chain to API routes: RateLimit -> CORS -> Logging -> Auth
+	// Apply middleware chain to API routes: Recovery -> RateLimit -> CORS -> Logging -> Auth
 	corsMiddleware := CORSMiddleware(corsCfg)
+	recoveryMiddleware := RecoveryMiddleware(logger)
 	var apiHandler http.Handler = authMw.Authenticate(apiMux)
 	apiHandler = s.loggingMiddleware(apiHandler)
 	apiHandler = corsMiddleware(apiHandler)
@@ -76,6 +77,9 @@ func NewServer(cfg config.ServiceConfig, corsCfg config.CORSConfig, authCfg conf
 	} else {
 		logger.Info("rate limiting disabled")
 	}
+
+	// Recovery middleware should be outermost to catch all panics
+	apiHandler = recoveryMiddleware(apiHandler)
 
 	mux.Handle("/api/", apiHandler)
 

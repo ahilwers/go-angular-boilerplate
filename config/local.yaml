@@ -46,7 +46,5 @@ cors:
   allow_credentials: true
   max_age: 3600 # seconds
 
-# TEMPORARY - Seed database with test data (1000 projects with 50 tasks each)
-# DELETE this section when no longer needed
-seed:
-  enabled: true # Set to false to disable seeding
+docs:
+  enabled: true # Set to false in production for security (hides API documentation)

@@ -133,128 +133,41 @@ make build  # Creates backend/bin/server
 
 ## Configuration
 
-Configuration uses [**Viper**](https://github.com/spf13/viper) library and is loaded with the following precedence (highest to lowest):
-1. Environment variables (highest priority)
-2. Config file: `config/local.yaml` (default) or path specified in `CONFIG_PATH` env var
-3. Default values (lowest priority)
+**📖 See [docs/CONFIGURATION.md](docs/CONFIGURATION.md) for complete configuration options!**
 
-Viper automatically handles:
-- Multiple config formats (YAML, JSON, TOML)
-- Environment variable mapping (e.g., `SERVICE_PORT` → `service.port`)
-- Config file watching (hot reload capability)
-- Nested configuration structures
-
-### Key Configuration Options
-
-#### Service
-- `SERVICE_HOST`: HTTP server host (default: localhost)
-- `SERVICE_PORT`: HTTP server port (default: 8080)
-- `SERVICE_READ_TIMEOUT`: Read timeout in seconds (default: 10)
-- `SERVICE_WRITE_TIMEOUT`: Write timeout in seconds (default: 10)
-
-#### Database
-- `DATABASE_URI`: MongoDB connection string (default: mongodb://localhost:27017)
-- `DATABASE_NAME`: Database name (default: boilerplate)
-- `DATABASE_USERNAME`: MongoDB username (optional, for authenticated connections)
-- `DATABASE_PASSWORD`: MongoDB password (optional, for authenticated connections)
-
-#### Authentication
-- `AUTH_ENABLED`: Enable/disable authentication (default: false)
-- `AUTH_ISSUER`: OpenID issuer URL
-- `AUTH_CLIENT_ID`: OAuth client ID
-- `AUTH_CLIENT_SECRET`: OAuth client secret
-- `AUTH_JWKS_URL`: JWKS endpoint for token validation
-
-#### Logging
-- `LOG_LEVEL`: Log level (debug, info, warn, error)
-- `LOG_FORMAT`: Output format (console, json)
-- `LOKI_URL`: Loki push endpoint (optional)
-- `LOKI_BEARER_TOKEN`: Loki authentication token (optional)
+Quick overview:
+- Uses [Viper](https://github.com/spf13/viper) for flexible configuration management
+- Environment variables override config file values
+- Default config: `config/local.yaml` or set `CONFIG_PATH` env var
+- Supports multiple formats: YAML, JSON, TOML
 
 ## API Documentation
 
-### Projects
+**📖 See [backend/docs/README.md](backend/docs/README.md) for complete API documentation!**
 
-#### List all projects
+The API documentation is auto-generated using OpenAPI/Swagger and available through:
+- **Scalar UI** (recommended): http://localhost:8080/docs/scalar - Modern, interactive API docs with OAuth2 integration
+- **Swagger UI**: http://localhost:8080/swagger/index.html - Traditional Swagger interface
+- **OpenAPI Spec**: http://localhost:8080/swagger/doc.json - Raw JSON specification
+
+### Quick API Examples
+
 ```bash
+# List all projects
 GET /api/v1/projects
-```
 
-#### Get a project
-```bash
-GET /api/v1/projects/{id}
-```
-
-#### Create a project
-```bash
+# Create a project
 POST /api/v1/projects
 Content-Type: application/json
+{"name": "My Project", "description": "Project description"}
 
-{
-  "name": "My Project",
-  "description": "Project description"
-}
-```
-
-#### Update a project
-```bash
-PUT /api/v1/projects/{id}
-Content-Type: application/json
-
-{
-  "name": "Updated Project",
-  "description": "Updated description"
-}
-```
-
-#### Delete a project
-```bash
-DELETE /api/v1/projects/{id}
-```
-
-### Tasks
-
-#### List tasks for a project
-```bash
-GET /api/v1/projects/{id}/tasks
-```
-
-#### Get a task
-```bash
-GET /api/v1/tasks/{id}
-```
-
-#### Create a task
-```bash
+# Create a task
 POST /api/v1/projects/{projectId}/tasks
 Content-Type: application/json
-
-{
-  "title": "My Task",
-  "status": "TODO",
-  "description": "Task description",
-  "due_date": "2025-12-31T00:00:00Z"
-}
+{"title": "My Task", "status": "TODO", "description": "Task description"}
 ```
 
-Task status can be: `TODO`, `IN_PROGRESS`, or `DONE`
-
-#### Update a task
-```bash
-PUT /api/v1/tasks/{id}
-Content-Type: application/json
-
-{
-  "title": "Updated Task",
-  "status": "IN_PROGRESS",
-  "description": "Updated description"
-}
-```
-
-#### Delete a task
-```bash
-DELETE /api/v1/tasks/{id}
-```
+Task status values: `TODO`, `IN_PROGRESS`, `DONE`
 
 ## Authentication
 

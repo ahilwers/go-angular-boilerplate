@@ -15,6 +15,7 @@ help:
 	@echo "  make docker-logs    - Show Docker logs"
 	@echo "  make run            - Run backend server"
 	@echo "  make fmt            - Format code"
+	@echo "  make docs           - Generate OpenAPI documentation"
 
 # Start development environment
 dev: docker-up
@@ -104,3 +105,11 @@ seed:
 # Generate code (placeholder for future)
 generate:
 	@echo "No code generation configured yet"
+
+# Generate API documentation
+docs:
+	@echo "Generating OpenAPI documentation..."
+	cd backend && swag init --output docs --parseDependency --parseInternal
+	@echo "Documentation generated at backend/docs/"
+	@echo "View at http://localhost:8080/docs/scalar (Scalar UI)"
+	@echo "View at http://localhost:8080/swagger/index.html (Swagger UI)"

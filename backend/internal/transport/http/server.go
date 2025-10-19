@@ -16,7 +16,7 @@ type Server struct {
 	authMiddleware *auth.Middleware
 }
 
-func NewServer(cfg config.ServiceConfig, corsCfg config.CORSConfig, authCfg config.AuthConfig, svc *service.Service, authMw *auth.Middleware, logger *slog.Logger) *Server {
+func NewServer(cfg config.ServiceConfig, corsCfg config.CORSConfig, authCfg config.AuthConfig, docsCfg config.DocsConfig, svc *service.Service, authMw *auth.Middleware, logger *slog.Logger) *Server {
 	s := &Server{
 		logger:         logger,
 		authMiddleware: authMw,
@@ -29,10 +29,16 @@ func NewServer(cfg config.ServiceConfig, corsCfg config.CORSConfig, authCfg conf
 	mux.HandleFunc("GET /ready", s.handleReady)
 
 	// API Documentation endpoints (no auth required for docs)
-	docsHandler := NewDocsHandler(authCfg)
-	mux.HandleFunc("GET /docs", docsHandler.Redirect)
-	mux.HandleFunc("GET /docs/scalar", docsHandler.ServeScalar)
-	mux.Handle("GET /swagger/", docsHandler.ServeSwaggerUI())
+	// Only register if documentation is enabled in config
+	if docsCfg.Enabled {
+		logger.Info("API documentation endpoints enabled")
+		docsHandler := NewDocsHandler(authCfg)
+		mux.HandleFunc("GET /docs", docsHandler.Redirect)
+		mux.HandleFunc("GET /docs/scalar", docsHandler.ServeScalar)
+		mux.Handle("GET /swagger/", docsHandler.ServeSwaggerUI())
+	} else {
+		logger.Info("API documentation endpoints disabled")
+	}
 
 	// API v1 routes - all protected by auth middleware
 	apiMux := http.NewServeMux()

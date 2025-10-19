@@ -10,7 +10,7 @@ type Config struct {
 	Auth     AuthConfig     `yaml:"auth" mapstructure:"auth"`
 	Logging  LoggingConfig  `yaml:"logging" mapstructure:"logging"`
 	CORS     CORSConfig     `yaml:"cors" mapstructure:"cors"`
-	Seed     SeedConfig     `yaml:"seed" mapstructure:"seed"` // TEMPORARY - for seeding test data
+	Docs     DocsConfig     `yaml:"docs" mapstructure:"docs"`
 }
 
 type ServiceConfig struct {
@@ -56,9 +56,7 @@ type CORSConfig struct {
 	MaxAge           int      `yaml:"max_age" mapstructure:"max_age"`
 }
 
-// TEMPORARY - SeedConfig controls database seeding for testing
-// DELETE this struct when seed functionality is removed
-type SeedConfig struct {
+type DocsConfig struct {
 	Enabled bool `yaml:"enabled" mapstructure:"enabled"`
 }
 

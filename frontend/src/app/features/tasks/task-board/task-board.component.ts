@@ -8,9 +8,9 @@ import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
-import { InputTextarea } from 'primeng/inputtextarea';
-import { DropdownModule } from 'primeng/dropdown';
-import { CalendarModule } from 'primeng/calendar';
+import { TextareaModule } from 'primeng/textarea';
+import { SelectModule } from 'primeng/select';
+import { DatePickerModule } from 'primeng/datepicker';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ChipModule } from 'primeng/chip';
@@ -32,9 +32,9 @@ import { Task, TaskStatus, CreateTaskDto, UpdateTaskDto } from '../../../core/mo
     ButtonModule,
     DialogModule,
     InputTextModule,
-    InputTextarea,
-    DropdownModule,
-    CalendarModule,
+    TextareaModule,
+    SelectModule,
+    DatePickerModule,
     ToastModule,
     ConfirmDialogModule,
     ChipModule,

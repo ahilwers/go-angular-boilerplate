@@ -7,7 +7,7 @@ import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
-import { InputTextarea } from 'primeng/inputtextarea';
+import { TextareaModule } from 'primeng/textarea';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { CardModule } from 'primeng/card';
@@ -27,7 +27,7 @@ import { Project, CreateProjectDto, UpdateProjectDto } from '../../../core/model
     ButtonModule,
     DialogModule,
     InputTextModule,
-    InputTextarea,
+    TextareaModule,
     ToastModule,
     ConfirmDialogModule,
     CardModule,

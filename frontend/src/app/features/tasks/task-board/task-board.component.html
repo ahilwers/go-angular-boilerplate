@@ -266,7 +266,7 @@
         <label for="description">{{ 'TASKS.FORM.DESCRIPTION_LABEL' | translate }}</label>
         <textarea
           id="description"
-          pInputTextarea
+          pTextarea
           [(ngModel)]="taskForm.description"
           [placeholder]="'TASKS.FORM.DESCRIPTION_PLACEHOLDER' | translate"
           [rows]="4"
@@ -276,7 +276,7 @@
 
       <div class="field">
         <label for="status">{{ 'TASKS.FORM.STATUS_LABEL' | translate }}</label>
-        <p-dropdown
+        <p-select
           id="status"
           [(ngModel)]="taskForm.status"
           [options]="statusOptions"
@@ -284,19 +284,19 @@
           optionValue="value"
           [placeholder]="'TASKS.FORM.STATUS_PLACEHOLDER' | translate"
           class="w-full"
-        ></p-dropdown>
+        ></p-select>
       </div>
 
       <div class="field">
         <label for="dueDate">{{ 'TASKS.FORM.DUE_DATE_LABEL' | translate }}</label>
-        <p-calendar
+        <p-datepicker
           id="dueDate"
           [(ngModel)]="taskForm.dueDate"
           [showIcon]="true"
           dateFormat="yy-mm-dd"
           [placeholder]="'TASKS.FORM.DUE_DATE_PLACEHOLDER' | translate"
           class="w-full"
-        ></p-calendar>
+        ></p-datepicker>
       </div>
     </div>
 

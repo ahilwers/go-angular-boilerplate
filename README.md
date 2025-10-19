@@ -15,9 +15,10 @@ Production-ready monorepo boilerplate with a Go backend and Angular frontend. Fe
 - **Comprehensive Tests**: Unit tests with mocks and integration tests with Testcontainers
 
 ### Frontend
-- **Angular 18+**: Modern Angular with standalone components (planned)
-- **PrimeNG UI**: Professional UI component library (planned)
-- **System-aware Theming**: Light/dark mode following system preferences (planned)
+- **Angular 20+**: Modern Angular with standalone components and signals
+- **PrimeNG 20**: Professional UI component library
+- **Internationalization**: Multi-language support with ngx-translate
+- **Drag & Drop**: Kanban-style task board with Angular CDK
 
 ## Tech Stack
 
@@ -28,10 +29,13 @@ Production-ready monorepo boilerplate with a Go backend and Angular frontend. Fe
 - **Structured Logging**: `slog` with Loki integration
 - **Testing**: Go testing, Testcontainers, httptest
 
-### Frontend (Planned)
-- **Angular**: Signals-ready architecture
-- **PrimeNG**: Enterprise UI components
-- **RxJS**: Reactive programming
+### Frontend
+- **Angular 20.3.6**: Latest Angular with signals and standalone components
+- **PrimeNG 20.2.0**: Modern enterprise UI components
+- **Angular CDK 20.2.9**: Material Component Dev Kit for drag & drop
+- **RxJS 7.8.2**: Reactive programming
+- **ngx-translate 17.0.0**: Internationalization support
+- **TypeScript 5.9.3**: Type-safe development
 
 ## Project Structure
 
@@ -51,6 +55,15 @@ Production-ready monorepo boilerplate with a Go backend and Angular frontend. Fe
 │   │   └── logger/          # Logging utilities
 │   ├── main.go              # Application entry point
 │   └── go.mod
+├── frontend/
+│   ├── src/
+│   │   ├── app/
+│   │   │   ├── core/        # Services, guards, interceptors
+│   │   │   ├── features/    # Feature modules (projects, tasks)
+│   │   │   └── shared/      # Shared components and utilities
+│   │   └── assets/          # i18n translations, images
+│   ├── angular.json         # Angular workspace config
+│   └── package.json         # Frontend dependencies
 ├── config/
 │   └── local.yaml           # Local development config
 ├── keycloak/                # Keycloak setup docs
@@ -63,6 +76,8 @@ Production-ready monorepo boilerplate with a Go backend and Angular frontend. Fe
 
 ### Prerequisites
 - Go 1.24 or later
+- Node.js 18 or later
+- npm or yarn
 - Docker and Docker Compose
 - Make (optional, but recommended)
 
@@ -89,7 +104,14 @@ cp .env.example .env
 # Edit .env as needed
 ```
 
-### 4. Run the backend server
+### 4. Install frontend dependencies
+```bash
+cd frontend
+npm install
+cd ..
+```
+
+### 5. Run the backend server
 ```bash
 make run
 # OR
@@ -98,7 +120,15 @@ cd backend && CONFIG_PATH=../config/local.yaml go run main.go
 
 The server will start on http://localhost:8080
 
-### 5. Verify it's working
+### 6. Run the frontend (in a separate terminal)
+```bash
+cd frontend
+npm start
+```
+
+The frontend will start on http://localhost:4200
+
+### 7. Verify it's working
 ```bash
 # Health check
 curl http://localhost:8080/health
@@ -107,9 +137,13 @@ curl http://localhost:8080/health
 curl http://localhost:8080/api/v1/projects
 ```
 
+Or open http://localhost:4200 in your browser to see the Angular frontend.
+
 ## Development
 
-### Running tests
+### Backend Development
+
+#### Running tests
 ```bash
 # All tests
 make test
@@ -121,15 +155,32 @@ make test-unit
 make test-integration
 ```
 
-### Code formatting and linting
+#### Code formatting and linting
 ```bash
 make fmt    # Format code
 make lint   # Run linters
 ```
 
-### Building
+#### Building
 ```bash
 make build  # Creates backend/bin/server
+```
+
+### Frontend Development
+
+#### Running the dev server
+```bash
+cd frontend
+npm start          # Start dev server on http://localhost:4200
+npm run build      # Build for production
+npm test           # Run tests
+```
+
+#### Building for production
+```bash
+cd frontend
+npm run build
+# Output: frontend/dist/todo-app/
 ```
 
 ## Configuration

@@ -19,6 +19,28 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// @title           Boilerplate API
+// @version         1.0
+// @description     Production-ready full-stack todo application API with Go backend and MongoDB persistence
+// @termsOfService  http://swagger.io/terms/
+
+// @contact.name   API Support
+// @contact.url    http://www.swagger.io/support
+// @contact.email  support@swagger.io
+
+// @license.name  Apache 2.0
+// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host      localhost:8080
+// @BasePath  /
+
+// @securityDefinitions.oauth2.implicit BearerAuth
+// @authorizationUrl http://localhost:8081/realms/boilerplate/protocol/openid-connect/auth
+// @tokenUrl http://localhost:8081/realms/boilerplate/protocol/openid-connect/token
+// @scope.openid OpenID Connect scope
+// @scope.profile Profile scope
+// @scope.email Email scope
+
 func main() {
 	configPath := os.Getenv("CONFIG_PATH")
 	if configPath == "" {
@@ -77,7 +99,7 @@ func main() {
 
 	authMiddleware := auth.NewMiddleware(cfg.Auth, appLogger)
 
-	httpServer := httpTransport.NewServer(cfg.Service, cfg.CORS, svc, authMiddleware, appLogger)
+	httpServer := httpTransport.NewServer(cfg.Service, cfg.CORS, cfg.Auth, svc, authMiddleware, appLogger)
 
 	serverErrors := make(chan error, 1)
 	go func() {

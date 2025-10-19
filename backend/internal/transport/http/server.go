@@ -16,7 +16,7 @@ type Server struct {
 	authMiddleware *auth.Middleware
 }
 
-func NewServer(cfg config.ServiceConfig, corsCfg config.CORSConfig, svc *service.Service, authMw *auth.Middleware, logger *slog.Logger) *Server {
+func NewServer(cfg config.ServiceConfig, corsCfg config.CORSConfig, authCfg config.AuthConfig, svc *service.Service, authMw *auth.Middleware, logger *slog.Logger) *Server {
 	s := &Server{
 		logger:         logger,
 		authMiddleware: authMw,
@@ -27,6 +27,12 @@ func NewServer(cfg config.ServiceConfig, corsCfg config.CORSConfig, svc *service
 	// Health check endpoint (no auth required)
 	mux.HandleFunc("GET /health", s.handleHealth)
 	mux.HandleFunc("GET /ready", s.handleReady)
+
+	// API Documentation endpoints (no auth required for docs)
+	docsHandler := NewDocsHandler(authCfg)
+	mux.HandleFunc("GET /docs", docsHandler.Redirect)
+	mux.HandleFunc("GET /docs/scalar", docsHandler.ServeScalar)
+	mux.Handle("GET /swagger/", docsHandler.ServeSwaggerUI())
 
 	// API v1 routes - all protected by auth middleware
 	apiMux := http.NewServeMux()

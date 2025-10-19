@@ -1,0 +1,496 @@
+basePath: /
+definitions:
+  entities.Project:
+    properties:
+      createdAt:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  entities.Task:
+    properties:
+      createdAt:
+        type: string
+      description:
+        type: string
+      dueDate:
+        type: string
+      id:
+        type: string
+      projectId:
+        type: string
+      status:
+        $ref: '#/definitions/entities.TaskStatus'
+      title:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  entities.TaskStatus:
+    enum:
+    - 0
+    - 1
+    - 2
+    type: integer
+    x-enum-varnames:
+    - TaskStatusTodo
+    - TaskStatusInProgress
+    - TaskStatusDone
+  http.CreateProjectRequest:
+    properties:
+      description:
+        example: A sample project description
+        type: string
+      name:
+        example: My Project
+        type: string
+    type: object
+  http.CreateTaskRequest:
+    properties:
+      description:
+        example: Detailed task description
+        type: string
+      due_date:
+        example: "2024-12-31T23:59:59Z"
+        type: string
+      status:
+        enum:
+        - TODO
+        - IN_PROGRESS
+        - DONE
+        example: TODO
+        type: string
+      title:
+        example: Implement feature X
+        type: string
+    type: object
+  http.UpdateProjectRequest:
+    properties:
+      description:
+        example: Updated description
+        type: string
+      name:
+        example: Updated Project
+        type: string
+    type: object
+  http.UpdateTaskRequest:
+    properties:
+      description:
+        example: Updated description
+        type: string
+      due_date:
+        example: "2024-12-31T23:59:59Z"
+        type: string
+      status:
+        enum:
+        - TODO
+        - IN_PROGRESS
+        - DONE
+        example: IN_PROGRESS
+        type: string
+      title:
+        example: Updated task title
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: Production-ready full-stack todo application API with Go backend and
+    MongoDB persistence
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Boilerplate API
+  version: "1.0"
+paths:
+  /api/v1/projects:
+    get:
+      consumes:
+      - application/json
+      description: Get all projects with optional pagination
+      parameters:
+      - description: Page number (1-based)
+        in: query
+        name: page
+        type: integer
+      - description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Paginated response with data, total, page, and limit
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: List projects
+      tags:
+      - projects
+    post:
+      consumes:
+      - application/json
+      description: Create a new project
+      parameters:
+      - description: Project to create
+        in: body
+        name: project
+        required: true
+        schema:
+          $ref: '#/definitions/http.CreateProjectRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/entities.Project'
+        "400":
+          description: Invalid request body or missing name
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create project
+      tags:
+      - projects
+  /api/v1/projects/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a project by ID
+      parameters:
+      - description: Project ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Missing project ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Delete project
+      tags:
+      - projects
+    get:
+      consumes:
+      - application/json
+      description: Get a single project by its ID
+      parameters:
+      - description: Project ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Project'
+        "400":
+          description: Missing project ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Project not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get project by ID
+      tags:
+      - projects
+    put:
+      consumes:
+      - application/json
+      description: Update an existing project
+      parameters:
+      - description: Project ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Project updates
+        in: body
+        name: project
+        required: true
+        schema:
+          $ref: '#/definitions/http.UpdateProjectRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Project'
+        "400":
+          description: Invalid request body or missing name
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Project not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update project
+      tags:
+      - projects
+  /api/v1/projects/{id}/tasks:
+    get:
+      consumes:
+      - application/json
+      description: Get all tasks for a specific project
+      parameters:
+      - description: Project ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entities.Task'
+            type: array
+        "400":
+          description: Missing project ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: List tasks by project
+      tags:
+      - tasks
+    post:
+      consumes:
+      - application/json
+      description: Create a new task for a specific project
+      parameters:
+      - description: Project ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Task to create
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/http.CreateTaskRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/entities.Task'
+        "400":
+          description: Invalid request body, missing title, or invalid status
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create task for project
+      tags:
+      - tasks
+  /api/v1/tasks/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a task by ID
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Missing task ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Delete task
+      tags:
+      - tasks
+    get:
+      consumes:
+      - application/json
+      description: Get a single task by its ID
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Task'
+        "400":
+          description: Missing task ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Task not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get task by ID
+      tags:
+      - tasks
+    put:
+      consumes:
+      - application/json
+      description: Update an existing task (partial updates supported)
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Task updates
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/http.UpdateTaskRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Task'
+        "400":
+          description: Invalid request body, empty title, or invalid status
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Task not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update task
+      tags:
+      - tasks
+securityDefinitions:
+  BearerAuth:
+    authorizationUrl: http://localhost:8081/realms/boilerplate/protocol/openid-connect/auth
+    flow: implicit
+    scopes:
+      email: Email scope
+      openid: OpenID Connect scope
+      profile: Profile scope
+    type: oauth2
+swagger: "2.0"

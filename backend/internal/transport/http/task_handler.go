@@ -23,7 +23,18 @@ func NewTaskHandler(svc service.TaskService, logger *slog.Logger) *TaskHandler {
 	}
 }
 
-// ListByProject handles GET /api/v1/projects/{id}/tasks
+// ListByProject godoc
+// @Summary      List tasks by project
+// @Description  Get all tasks for a specific project
+// @Tags         tasks
+// @Accept       json
+// @Produce      json
+// @Param        id   path      string  true  "Project ID"
+// @Success      200  {array}   entities.Task
+// @Failure      400  {object}  map[string]string  "Missing project ID"
+// @Failure      500  {object}  map[string]string  "Internal server error"
+// @Security     BearerAuth
+// @Router       /api/v1/projects/{id}/tasks [get]
 func (h *TaskHandler) ListByProject(w http.ResponseWriter, r *http.Request) {
 	projectID := r.PathValue("id")
 	if projectID == "" {
@@ -41,7 +52,18 @@ func (h *TaskHandler) ListByProject(w http.ResponseWriter, r *http.Request) {
 	respondJSON(w, tasks, http.StatusOK)
 }
 
-// Get handles GET /api/v1/tasks/{id}
+// Get godoc
+// @Summary      Get task by ID
+// @Description  Get a single task by its ID
+// @Tags         tasks
+// @Accept       json
+// @Produce      json
+// @Param        id   path      string  true  "Task ID"
+// @Success      200  {object}  entities.Task
+// @Failure      400  {object}  map[string]string  "Missing task ID"
+// @Failure      404  {object}  map[string]string  "Task not found"
+// @Security     BearerAuth
+// @Router       /api/v1/tasks/{id} [get]
 func (h *TaskHandler) Get(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	if id == "" {
@@ -59,7 +81,27 @@ func (h *TaskHandler) Get(w http.ResponseWriter, r *http.Request) {
 	respondJSON(w, task, http.StatusOK)
 }
 
-// CreateForProject handles POST /api/v1/projects/{id}/tasks
+// CreateTaskRequest represents the request body for creating a task
+type CreateTaskRequest struct {
+	Title       string     `json:"title" example:"Implement feature X"`
+	Status      string     `json:"status" example:"TODO" enums:"TODO,IN_PROGRESS,DONE"`
+	DueDate     *time.Time `json:"due_date,omitempty" example:"2024-12-31T23:59:59Z"`
+	Description string     `json:"description" example:"Detailed task description"`
+}
+
+// CreateForProject godoc
+// @Summary      Create task for project
+// @Description  Create a new task for a specific project
+// @Tags         tasks
+// @Accept       json
+// @Produce      json
+// @Param        id    path      string              true  "Project ID"
+// @Param        task  body      CreateTaskRequest   true  "Task to create"
+// @Success      201   {object}  entities.Task
+// @Failure      400   {object}  map[string]string  "Invalid request body, missing title, or invalid status"
+// @Failure      500   {object}  map[string]string  "Internal server error"
+// @Security     BearerAuth
+// @Router       /api/v1/projects/{id}/tasks [post]
 func (h *TaskHandler) CreateForProject(w http.ResponseWriter, r *http.Request) {
 	projectID := r.PathValue("id")
 	if projectID == "" {
@@ -112,7 +154,28 @@ func (h *TaskHandler) CreateForProject(w http.ResponseWriter, r *http.Request) {
 	respondJSON(w, task, http.StatusCreated)
 }
 
-// Update handles PUT /api/v1/tasks/{id}
+// UpdateTaskRequest represents the request body for updating a task
+type UpdateTaskRequest struct {
+	Title       *string    `json:"title,omitempty" example:"Updated task title"`
+	Status      *string    `json:"status,omitempty" example:"IN_PROGRESS" enums:"TODO,IN_PROGRESS,DONE"`
+	DueDate     *time.Time `json:"due_date,omitempty" example:"2024-12-31T23:59:59Z"`
+	Description *string    `json:"description,omitempty" example:"Updated description"`
+}
+
+// Update godoc
+// @Summary      Update task
+// @Description  Update an existing task (partial updates supported)
+// @Tags         tasks
+// @Accept       json
+// @Produce      json
+// @Param        id    path      string             true  "Task ID"
+// @Param        task  body      UpdateTaskRequest  true  "Task updates"
+// @Success      200   {object}  entities.Task
+// @Failure      400   {object}  map[string]string  "Invalid request body, empty title, or invalid status"
+// @Failure      404   {object}  map[string]string  "Task not found"
+// @Failure      500   {object}  map[string]string  "Internal server error"
+// @Security     BearerAuth
+// @Router       /api/v1/tasks/{id} [put]
 func (h *TaskHandler) Update(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	if id == "" {
@@ -186,7 +249,18 @@ func (h *TaskHandler) Update(w http.ResponseWriter, r *http.Request) {
 	respondJSON(w, task, http.StatusOK)
 }
 
-// Delete handles DELETE /api/v1/tasks/{id}
+// Delete godoc
+// @Summary      Delete task
+// @Description  Delete a task by ID
+// @Tags         tasks
+// @Accept       json
+// @Produce      json
+// @Param        id   path  string  true  "Task ID"
+// @Success      204  "No Content"
+// @Failure      400  {object}  map[string]string  "Missing task ID"
+// @Failure      500  {object}  map[string]string  "Internal server error"
+// @Security     BearerAuth
+// @Router       /api/v1/tasks/{id} [delete]
 func (h *TaskHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	if id == "" {

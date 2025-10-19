@@ -22,8 +22,19 @@ func NewProjectHandler(svc service.ProjectService, logger *slog.Logger) *Project
 	}
 }
 
-// List handles GET /api/v1/projects
-// Supports optional pagination via query params: ?page=1&limit=10
+// List godoc
+// @Summary      List projects
+// @Description  Get all projects with optional pagination
+// @Tags         projects
+// @Accept       json
+// @Produce      json
+// @Param        page   query  int  false  "Page number (1-based)"
+// @Param        limit  query  int  false  "Items per page"
+// @Success      200  {array}   entities.Project
+// @Success      200  {object}  map[string]interface{}  "Paginated response with data, total, page, and limit"
+// @Failure      500  {object}  map[string]string  "Internal server error"
+// @Security     BearerAuth
+// @Router       /api/v1/projects [get]
 func (h *ProjectHandler) List(w http.ResponseWriter, r *http.Request) {
 	page, limit := parsePaginationParams(r)
 	if page > 0 && limit > 0 {
@@ -53,7 +64,18 @@ func (h *ProjectHandler) List(w http.ResponseWriter, r *http.Request) {
 	respondJSON(w, projects, http.StatusOK)
 }
 
-// Get handles GET /api/v1/projects/{id}
+// Get godoc
+// @Summary      Get project by ID
+// @Description  Get a single project by its ID
+// @Tags         projects
+// @Accept       json
+// @Produce      json
+// @Param        id   path      string  true  "Project ID"
+// @Success      200  {object}  entities.Project
+// @Failure      400  {object}  map[string]string  "Missing project ID"
+// @Failure      404  {object}  map[string]string  "Project not found"
+// @Security     BearerAuth
+// @Router       /api/v1/projects/{id} [get]
 func (h *ProjectHandler) Get(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	if id == "" {
@@ -70,7 +92,24 @@ func (h *ProjectHandler) Get(w http.ResponseWriter, r *http.Request) {
 	respondJSON(w, project, http.StatusOK)
 }
 
-// Create handles POST /api/v1/projects
+// CreateProjectRequest represents the request body for creating a project
+type CreateProjectRequest struct {
+	Name        string `json:"name" example:"My Project"`
+	Description string `json:"description" example:"A sample project description"`
+}
+
+// Create godoc
+// @Summary      Create project
+// @Description  Create a new project
+// @Tags         projects
+// @Accept       json
+// @Produce      json
+// @Param        project  body      CreateProjectRequest  true  "Project to create"
+// @Success      201      {object}  entities.Project
+// @Failure      400      {object}  map[string]string  "Invalid request body or missing name"
+// @Failure      500      {object}  map[string]string  "Internal server error"
+// @Security     BearerAuth
+// @Router       /api/v1/projects [post]
 func (h *ProjectHandler) Create(w http.ResponseWriter, r *http.Request) {
 	var req struct {
 		Name        string `json:"name"`
@@ -101,7 +140,26 @@ func (h *ProjectHandler) Create(w http.ResponseWriter, r *http.Request) {
 	respondJSON(w, project, http.StatusCreated)
 }
 
-// Update handles PUT /api/v1/projects/{id}
+// UpdateProjectRequest represents the request body for updating a project
+type UpdateProjectRequest struct {
+	Name        string `json:"name" example:"Updated Project"`
+	Description string `json:"description" example:"Updated description"`
+}
+
+// Update godoc
+// @Summary      Update project
+// @Description  Update an existing project
+// @Tags         projects
+// @Accept       json
+// @Produce      json
+// @Param        id       path      string                 true  "Project ID"
+// @Param        project  body      UpdateProjectRequest   true  "Project updates"
+// @Success      200      {object}  entities.Project
+// @Failure      400      {object}  map[string]string  "Invalid request body or missing name"
+// @Failure      404      {object}  map[string]string  "Project not found"
+// @Failure      500      {object}  map[string]string  "Internal server error"
+// @Security     BearerAuth
+// @Router       /api/v1/projects/{id} [put]
 func (h *ProjectHandler) Update(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	if id == "" {
@@ -148,7 +206,18 @@ func (h *ProjectHandler) Update(w http.ResponseWriter, r *http.Request) {
 	respondJSON(w, project, http.StatusOK)
 }
 
-// Delete handles DELETE /api/v1/projects/{id}
+// Delete godoc
+// @Summary      Delete project
+// @Description  Delete a project by ID
+// @Tags         projects
+// @Accept       json
+// @Produce      json
+// @Param        id   path  string  true  "Project ID"
+// @Success      204  "No Content"
+// @Failure      400  {object}  map[string]string  "Missing project ID"
+// @Failure      500  {object}  map[string]string  "Internal server error"
+// @Security     BearerAuth
+// @Router       /api/v1/projects/{id} [delete]
 func (h *ProjectHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	if id == "" {
